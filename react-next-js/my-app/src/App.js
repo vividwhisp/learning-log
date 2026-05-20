@@ -1,12 +1,20 @@
-import logo from './logo.svg';
-import './App.css';
-
-function App() {
+export default function Square() {
   return (
-    <div className="App">
-      <h1>Hello</h1>
+    <><div className="board-row">
+    <button className="square">X</button>
+    <button className="square">X</button>
+    <button className="square">X</button>
     </div>
+    <div className="board-row">
+    <button className="square">X</button>
+    <button className="square">X</button>
+    <button className="square">X</button>
+    </div>
+    <div className="board-row">
+    <button className="square">X</button>
+    <button className="square">X</button>
+    <button className="square">X</button>
+    </div>
+    </>
   );
 }
-
-export default App;

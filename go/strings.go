@@ -1,10 +1,10 @@
 package main
 
-import "fmt"
+// import "fmt"
 
 
-func main(){
-	var str string = "Vinesh"
-	fmt.Println(str[0])
+// func main(){
+// 	var str string = "Vinesh"
+// 	fmt.Println(str[0])
 	
-}
+// }

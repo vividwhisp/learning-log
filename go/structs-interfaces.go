@@ -36,7 +36,7 @@ type engine interface{
 	milesLeft() int
 }
 
-func main(){
-	var gal electricEngine = electricEngine{25, 15} //we can also ommit the field names: gasEngine{15 ,100}
-	canMakeIt(gal, 200)
-}
+// func main(){
+// 	var gal electricEngine = electricEngine{25, 15} //we can also ommit the field names: gasEngine{15 ,100}
+// 	canMakeIt(gal, 200)
+// }

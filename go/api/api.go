@@ -15,12 +15,12 @@ type CoinBalanceResponse struct{
 	//Success code
 	Code int
 
-	//accpunt balance
+	//account balance
 	Balance int64
 }
 
 type Error struct{
-	//Erro Code
+	//Error Code
 	Code int
 
 	//Error Message
@@ -42,7 +42,7 @@ var(
 	RequestErrorHandler = func( w http.ResponseWriter, err error){
 		writeError(w, err.Error(),http.StatusBadRequest)
 	}
-	InternalErrorhandler = func( w http.ResponseWriter){
+	InternalErrorHandler = func( w http.ResponseWriter){
 		writeError(w, "An Unexpected Error Occured. ",http.StatusInternalServerError)
 	}
 )

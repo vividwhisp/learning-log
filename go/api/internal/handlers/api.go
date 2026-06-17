@@ -1,9 +1,9 @@
 package handlers
 
-
-import ( 
+import (
 	"github.com/go-chi/chi"
 	chimiddle "github.com/go-chi/chi/middleware"
+	"learning-log/go/internal/middleware"
 )
 
 func Handler(r *chi.Mux){

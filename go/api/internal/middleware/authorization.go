@@ -4,8 +4,8 @@ import(
 	"errors"
 	"net/http"
 
-	"github.com/avukadin/goapi/api"
-	"github.com/avukadin/goapi/internal/tools"
+	api "learning-log/go"
+	"learning-log/go/internal/tools"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -23,7 +23,7 @@ func Authorization(next http.Handler) http.Handler{
 			api.RequestErrorHandler(w, UnAuthorizedError)
 			return
 		}
-		var database *tools.DatabaseInterface
+		var database tools.DatabaseInterface
 		database, err = tools.NewDatabase()
 
 		if err != nil{
@@ -31,7 +31,7 @@ func Authorization(next http.Handler) http.Handler{
 			return
 		}
 		var loginDetails *tools.LoginDetails
-		loginDetails = (*&database).GetUserLoginDetails(username)
+		loginDetails = database.GetUserLoginDetails(username)
 
 		if(loginDetails == nil || (token!= (*loginDetails).AuthToken)){
 

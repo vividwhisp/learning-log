@@ -16,3 +16,6 @@ Learning React and Next.js:
 - **my-app**: Next.js project (bootstrapped with Create Next App)
 
 More topics will be added as learning progresses.
+
+## Data Structures & algorithms
+

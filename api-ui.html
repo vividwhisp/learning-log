@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Coin Balance API</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f0f2f5; }
+    .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,.1); width: 380px; }
+    h1 { font-size: 1.5rem; margin-bottom: 1.5rem; text-align: center; }
+    label { display: block; font-size: .875rem; font-weight: 600; margin-bottom: .25rem; color: #333; }
+    input, select { width: 100%; padding: .5rem .75rem; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 1rem; font-size: .9rem; }
+    button { width: 100%; padding: .6rem; background: #2563eb; color: white; border: none; border-radius: 6px; font-size: 1rem; cursor: pointer; }
+    button:hover { background: #1d4ed8; }
+    pre { background: #f8f9fa; border: 1px solid #ddd; border-radius: 6px; padding: .75rem; margin-top: 1rem; overflow-x: auto; font-size: .85rem; }
+    .error { color: #dc2626; }
+    .ok { color: #16a34a; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Coin Balance</h1>
+    <label for="user">Username</label>
+    <select id="user">
+      <option value="raj">raj</option>
+      <option value="alex">alex</option>
+      <option value="neel">neel</option>
+    </select>
+    <label for="token">Auth Token</label>
+    <input id="token" value="123QWE">
+    <button onclick="getBalance()">Get Balance</button>
+    <pre id="output">Click the button...</pre>
+  </div>
+
+  <script>
+    const tokens = { raj: "123QWE", alex: "123ABC", neel: "123RTY" };
+    document.getElementById("user").onchange = function() {
+      document.getElementById("token").value = tokens[this.value] || "";
+    };
+
+    async function getBalance() {
+      const username = document.getElementById("user").value;
+      const token = document.getElementById("token").value;
+      const out = document.getElementById("output");
+      out.textContent = "Loading...";
+      out.className = "";
+
+      try {
+        const res = await fetch(`http://localhost:8000/account/coins?username=${username}`, {
+          headers: { "Authorization": token }
+        });
+        const data = await res.json();
+        out.textContent = JSON.stringify(data, null, 2);
+        out.className = res.ok ? "ok" : "error";
+      } catch (err) {
+        out.textContent = "Error: " + err.message;
+        out.className = "error";
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,16 +1,20 @@
-# base image
+FROM golang:1.26-alpine AS builder
 
+WORKDIR /app
 
+COPY go.mod go.sum ./
+RUN go mod download
 
-# workdir
+COPY . .
 
+RUN CGO_ENABLED=0 GOOS=linux go build -o /app/api ./cmd/api
 
-# copy
+FROM alpine:latest
 
+WORKDIR /root/
 
-# run
+COPY --from=builder /app/api .
 
+EXPOSE 8000
 
-# port
-
-# command
+CMD ["./api"]

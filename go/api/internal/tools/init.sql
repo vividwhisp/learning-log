@@ -18,5 +18,6 @@ ON CONFLICT (username) DO NOTHING;
 INSERT INTO coins (username, balance) VALUES
     ('raj', 100),
     ('alex', 200),
-    ('neel', 300)
+    ('neel', 300),
+    ('shiva', 400)
 ON CONFLICT (username) DO NOTHING;

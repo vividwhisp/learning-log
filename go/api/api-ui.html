@@ -25,6 +25,7 @@
       <option value="raj">raj</option>
       <option value="alex">alex</option>
       <option value="neel">neel</option>
+      <option value="shiva">shiva</option>
     </select>
     <label for="token">Auth Token</label>
     <input id="token" value="123QWE">
@@ -33,7 +34,7 @@
   </div>
 
   <script>
-    const tokens = { raj: "123QWE", alex: "123ABC", neel: "123RTY" };
+    const tokens = { raj: "123QWE", alex: "123ABC", neel: "123RTY",shiva:"123SHI" };
     document.getElementById("user").onchange = function() {
       document.getElementById("token").value = tokens[this.value] || "";
     };

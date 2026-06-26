@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS coins (
 INSERT INTO users (username, auth_token) VALUES
     ('raj', '123QWE'),
     ('alex', '123ABC'),
-    ('neel', '123RTY')
+    ('neel', '123RTY'),
+    ('shiva','123SHI')
 ON CONFLICT (username) DO NOTHING;
 
 INSERT INTO coins (username, balance) VALUES

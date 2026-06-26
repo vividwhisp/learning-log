@@ -1,33 +1,40 @@
 package tools
 
-import(
+import (
+	"os"
+
 	log "github.com/sirupsen/logrus"
 )
 
-type LoginDetails struct{
+type LoginDetails struct {
 	AuthToken string
+	Username  string
+}
+
+type CoinDetails struct {
+	Coins    int64
 	Username string
 }
 
-type CoinDetails struct{
-	Coins int64
-	Username string
-}
-
-type DatabaseInterface interface{
-	GetUserLoginDetails (username string) *LoginDetails
-	GetUserCoins (username string) *CoinDetails
+type DatabaseInterface interface {
+	GetUserLoginDetails(username string) *LoginDetails
+	GetUserCoins(username string) *CoinDetails
 	SetupDatabase() error
 }
 
-func NewDatabase ()(DatabaseInterface, error){
-	var database DatabaseInterface = &mockDB{}
+func NewDatabase() (DatabaseInterface, error) {
+	var database DatabaseInterface
+
+	if os.Getenv("DATABASE_URL") != "" {
+		database = &postgresDB{}
+	} else {
+		database = &mockDB{}
+	}
 
 	var err error = database.SetupDatabase()
-	if err != nil{
+	if err != nil {
 		log.Error(err)
 		return nil, err
 	}
 	return database, nil
-
 }

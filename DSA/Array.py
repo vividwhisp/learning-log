@@ -1,10 +1,7 @@
 from array import *
-val = array('i',[1,2,3,4,5,6])
+val = array('i',[1,2,3,4,5,6,8,9,0])
 
-for i in range(0,6):
-    print(val[i],end=" ")
+abc = val[1:5]
 
-print("\n")
-
-for x in val:
-    print(x)
+for x in abc:
+    print(x,end=" , ")

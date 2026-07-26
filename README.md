@@ -2,46 +2,24 @@
 
 A personal learning log documenting progress in software development.
 
-## Go API
+## Go
 
-REST API built with Go and `chi` router.
+Learning Go fundamentals and building an API:
 
-### Endpoints
-
-| Method | Path                          | Description          | Auth Header       |
-|--------|-------------------------------|----------------------|-------------------|
-| GET    | `/account/coins?username=`    | Get coin balance     | `Authorization`   |
-
-### Quick Start (Docker Compose)
-
-```bash
-docker compose up --build
-```
-
-Starts the API on `http://localhost:8000` and PostgreSQL on `:5432`.
-
-### Test Users
-
-| Username | Auth Token | Coins |
-|----------|-----------|-------|
-| raj      | 123QWE    | 100   |
-| alex     | 123ABC    | 200   |
-| neel     | 123RTY    | 300   |
-
-```bash
-curl "http://localhost:8000/account/coins?username=raj" -H "Authorization: 123QWE"
-```
-
-### Database
-
-- Uses PostgreSQL when `DATABASE_URL` env var is set, otherwise falls back to an in-memory mock
-- Schema and seed data are embedded in the binary via `//go:embed`
+- **Basics**: intro, arrays/loops, pointers, strings, structs/interfaces, goroutines, channels
+- **API**: REST API using `chi` router with coin balance endpoint
+- **Database**: PostgreSQL integration with mock DB fallback
+- **Containerization**: Docker & Docker Compose setup
 
 ## React / Next.js
 
 Learning React and Next.js:
 
-- **my-app**: Next.js project (bootstrapped with Create Next App)
+- **my-app**: React project (bootstrapped with Create React App)
 
 ## Data Structures & Algorithms
+
+Learning fundamental data structures and algorithms in Python:
+
+- **Arrays**: array slicing and iteration
 

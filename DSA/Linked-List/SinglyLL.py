@@ -20,7 +20,21 @@ class SinglyLinkedList:
 
     def insertAtBeginning(self,value):
         temp = Node(value)
-        
+        temp.next = self.head
+        self.head = temp
+
+    def insertInMiddle(self,value,x):
+        temp = Node(value)
+        t1 = self.head
+
+        while(t1.next != None):
+            if(t1.data == x):
+                temp.next = t1.next
+                t1.next = temp
+            t1 = t1.next
+
+    
+
 
     def printLL(self):
         t1 = self.head
@@ -32,4 +46,6 @@ class SinglyLinkedList:
 obj = SinglyLinkedList()
 obj.insertAtEnd(10)
 obj.insertAtEnd(20)
+obj.insertAtBeginning(3)
+obj.insertInMiddle(8,10)
 obj.printLL()

@@ -27,6 +27,21 @@ class DoublyLL:
         temp.next = self.head
         self.head.prev = temp
         self.head = temp
+
+    def insertInMiddle(self,value,x):
+        t = self.head
+        temp = Node(value)
+        while(t.next != None):
+            if(t.data == x):
+                break
+            else:
+                t = t.next
+        temp.next = t.next
+        t.next.prev = temp
+        t.next = temp
+        temp.prev = t
+            
+
         
 
 
@@ -43,4 +58,5 @@ obj.insertAtEnd(20)
 obj.insertAtEnd(30)
 obj.insertAtEnd(40)
 obj.insertAtBeg(5)
+obj.insertInMiddle(50,20)
 obj.printLL()

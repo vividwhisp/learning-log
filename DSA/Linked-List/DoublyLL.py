@@ -42,8 +42,27 @@ class DoublyLL:
         temp.prev = t
             
 
+    def deleteDLL(self,value):
+        if(self.head == None):
+            print("Linked List is empty")
+            return
         
-
+        t = self.head
+        if(t.data == value):
+            self.head = t.next
+            self.head.prev = None
+            return
+        
+        while(t.next != None):
+            if(t.data == value):
+                t.prev.next = t.next
+                t.next.prev = t.prev
+                return
+            else:
+                t = t.next
+        if(t.data == value):
+            t.prev.next = None
+        
 
     def printLL(self):
         t = self.head
@@ -59,4 +78,5 @@ obj.insertAtEnd(30)
 obj.insertAtEnd(40)
 obj.insertAtBeg(5)
 obj.insertInMiddle(50,20)
+obj.deleteDLL(50)
 obj.printLL()

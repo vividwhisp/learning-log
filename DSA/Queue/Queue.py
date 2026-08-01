@@ -8,5 +8,17 @@ class Queue:
     def insert(self,value):
         self.items.append(value)
 
-    
+    def delete(self):
+        if self.isEmpty():
+            raise Exception("Queue is Empty")
+        else:
+            return self.items.pop(0)
+
+q = Queue()
+q.insert(10)
+q.insert(20)
+q.insert(30)
+print(q.delete())
+print(q.delete())
+print(q.delete())
 

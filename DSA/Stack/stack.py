@@ -29,4 +29,3 @@ print(obj.pop())
 print(obj.pop())
 print(obj.pop())
 print(obj.peek())
-

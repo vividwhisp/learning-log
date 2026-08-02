@@ -21,5 +21,8 @@ Learning React and Next.js:
 
 Learning fundamental data structures and algorithms in Python:
 
-- **Arrays**: array slicing and iteration
+- **Arrays**: basic arrays, slicing/iteration, NumPy arrays
+- **Linked Lists**: singly and doubly linked lists
+- **Stacks**: stack implementation
+- **Queues**: queue and double-ended queue implementation
 

@@ -4,9 +4,6 @@ def quickSort(arr, l, r):
        quickSort(arr, l, p-1)
        quickSort(arr, p+1, r)
 
-    
-
-
 def partition(arr, l, r):
     pivot = arr[l]
     i = l + 1

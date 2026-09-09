@@ -30,3 +30,8 @@ build
 # Misc
 package-lock.json
 *.exe
+
+.venv/
+.env
+__pycache__/
+*.pyc

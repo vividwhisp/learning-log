@@ -17,8 +17,13 @@ while True:
         print("Exiting..")
         sys.exit()
     else:
-        response = client.responses.create(
+        response = client.chat.completions.create(
             model="openai/gpt-oss-20b",
-            input=user_input
+            temperature=0.7,
+            messages=[
+               {"role":"user","content":user_input }
+            ],
+            max_tokens=1024
         )
-        print("AI: " + response.output_text)
+        ai_response = response.choices[0].message.content
+        print(f"AI: {ai_response}" )

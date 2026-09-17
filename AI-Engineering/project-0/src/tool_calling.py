@@ -21,6 +21,8 @@ def calculate(a: float, b: float, operation: str) -> float:
         return a * b
 
     if operation == "divide":
+        if b == 0:
+            raise Exception("Cannot divide bu 0")
         return a / b
 
     raise ValueError("Unknown operation")
@@ -75,7 +77,10 @@ print("Tool call: ",tool_call.function.name)
 print("Args: ", tool_call.function.arguments)
 
 arguments = json.loads(tool_call.function.arguments)
-result = calculate(**arguments)
+try:
+    result = calculate(**arguments)
+except Exception as e:
+     result = f"Tool error: {e}"
 
 messages = [
     {
@@ -92,11 +97,13 @@ messages.append(
         "content": str(result),
     }
 )
-
-final_response = client.chat.completions.create(
-    model="openai/gpt-oss-20b",
-    messages=messages,
-    tools=tools,
-)
+try:
+    final_response = client.chat.completions.create(
+        model="openai/gpt-oss-20b",
+        messages=messages,
+        tools=tools,
+    )
+except Exception as e:
+    print(f"API error: {e}")
 
 print(final_response.choices[0].message.content)

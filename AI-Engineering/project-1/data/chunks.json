@@ -1,0 +1,233 @@
+[
+  {
+    "id": "kubernetes-000",
+    "title": "Kubernetes Fundamentals",
+    "source": "kubernetes.md",
+    "chunk_index": 0,
+    "text": "# Kubernetes Fundamentals\n\n## What Kubernetes Does\n\nKubernetes is a platform for deploying and operating containerized applications across a cluster of machines. It provides a declarative API: instead of manually starting every container, an operator describes the desired state, and Kubernetes controllers work to move the actual state toward that desired state. Kubernetes does not build application images; images are typically built by a separate tool or CI pipeline and then referenced by workloads.\n\nA Kubernetes cluster contains a control plane and worker nodes. The control plane stores cluster state and makes scheduling and coordination decisions. Worker nodes run application workloads in Pods. In a managed Kubernetes service, the provider operates some or all of the control-plane components, while the user still configures workloads, access, networking, and resources.\n\n## Pods, Deployments, and ReplicaSets"
+  },
+  {
+    "id": "kubernetes-001",
+    "title": "Kubernetes Fundamentals",
+    "source": "kubernetes.md",
+    "chunk_index": 1,
+    "text": "of the control-plane components, while the user still configures workloads, access, networking, and resources.\n\n## Pods, Deployments, and ReplicaSets\n\nA Pod is the smallest deployable unit in Kubernetes. A Pod contains one or more closely related containers that share a network namespace and can share storage volumes. Containers inside the same Pod can communicate through `localhost`. Pods are disposable: a Pod may be replaced when a node fails, a rollout occurs, or a controller decides that replacement is needed. Applications should not rely on a Pod's IP address remaining stable.\n\nA Deployment manages a replicated application through ReplicaSets. It is commonly used for stateless services such as HTTP APIs. The Deployment declares the desired number of replicas and a Pod template. Kubernetes creates or updates Pods to match that declaration and supports rolling updates and rollbacks.\n\nExample Deployment:"
+  },
+  {
+    "id": "kubernetes-002",
+    "title": "Kubernetes Fundamentals",
+    "source": "kubernetes.md",
+    "chunk_index": 2,
+    "text": "icas and a Pod template. Kubernetes creates or updates Pods to match that declaration and supports rolling updates and rollbacks.\n\nExample Deployment:\n\n```yaml\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: api\nspec:\n  replicas: 3\n  selector:\n    matchLabels:\n      app: api\n  template:\n    metadata:\n      labels:\n        app: api\n    spec:\n      containers:\n        - name: api\n          image: example/api:1.0.0\n          ports:\n            - containerPort: 8000\n          resources:\n            requests:\n              cpu: \"100m\"\n              memory: \"128Mi\"\n            limits:\n              cpu: \"500m\"\n              memory: \"256Mi\"\n```\n\nThe Deployment selector must match the labels on its Pod template. Resource requests describe the resources Kubernetes uses for scheduling. Limits constrain resource use, with CPU throttling and memory termination behavior depending on the resource and runtime. Values should be based on observation and load testing rather than copied blindly."
+  },
+  {
+    "id": "kubernetes-003",
+    "title": "Kubernetes Fundamentals",
+    "source": "kubernetes.md",
+    "chunk_index": 3,
+    "text": "memory termination behavior depending on the resource and runtime. Values should be based on observation and load testing rather than copied blindly.\n\n## Services and Service Discovery\n\nA Service provides a stable network endpoint for a changing set of Pods. The most common types are `ClusterIP` for cluster-internal access, `NodePort` for exposing a port on each node, and `LoadBalancer` for requesting an external load balancer when supported by the cluster environment. A Service selects backend Pods using labels. If the selector does not match any Pod labels, the Service may exist but have no usable endpoints.\n\nExample Service:\n\n```yaml\napiVersion: v1\nkind: Service\nmetadata:\n  name: api\nspec:\n  selector:\n    app: api\n  ports:\n    - name: http\n      port: 80\n      targetPort: 8000\n  type: ClusterIP\n```"
+  },
+  {
+    "id": "kubernetes-004",
+    "title": "Kubernetes Fundamentals",
+    "source": "kubernetes.md",
+    "chunk_index": 4,
+    "text": "nd: Service\nmetadata:\n  name: api\nspec:\n  selector:\n    app: api\n  ports:\n    - name: http\n      port: 80\n      targetPort: 8000\n  type: ClusterIP\n```\n\nIn this example, clients in the cluster connect to `api` on port 80, and traffic is forwarded to port 8000 on selected Pods. DNS-based service discovery normally lets other workloads address the Service by name.\n\n## ConfigMaps, Secrets, and Configuration\n\nA ConfigMap stores non-sensitive configuration data, such as feature flags or service settings. A Secret is intended for sensitive values such as credentials and tokens. A Secret is not automatically safe merely because it has a different object type: access should be restricted with RBAC, and encryption at rest should be configured where appropriate. Avoid hard-coding passwords, API keys, or database connection strings into images or public manifests."
+  },
+  {
+    "id": "kubernetes-005",
+    "title": "Kubernetes Fundamentals",
+    "source": "kubernetes.md",
+    "chunk_index": 5,
+    "text": "at rest should be configured where appropriate. Avoid hard-coding passwords, API keys, or database connection strings into images or public manifests.\n\nConfiguration may be exposed to a container through environment variables or mounted files. When configuration changes, whether an application sees the update immediately depends on how it is consumed and whether the process reloads it. Some changes require a Pod restart or rollout.\n\n## Health Checks\n\nA readiness probe answers whether a container is ready to receive traffic. A liveness probe helps Kubernetes decide whether a container is stuck and should be restarted. A startup probe gives a slow-starting application extra time before liveness or readiness checks take effect. These probes have different purposes and should not all point blindly at the same endpoint."
+  },
+  {
+    "id": "kubernetes-006",
+    "title": "Kubernetes Fundamentals",
+    "source": "kubernetes.md",
+    "chunk_index": 6,
+    "text": "xtra time before liveness or readiness checks take effect. These probes have different purposes and should not all point blindly at the same endpoint.\n\nA readiness endpoint should reflect whether the instance can serve requests, including whether essential dependencies are available if that is part of the application's service contract. A liveness endpoint should avoid failing merely because a temporary dependency is unavailable; otherwise, the cluster can repeatedly restart healthy application processes during an external outage.\n\n## Useful kubectl Commands\n\n```bash\nkubectl get pods\nkubectl get deployments\nkubectl get services\nkubectl describe pod <pod-name>\nkubectl logs <pod-name>\nkubectl logs deployment/api\nkubectl get events --sort-by=.metadata.creationTimestamp\nkubectl apply -f deployment.yaml\nkubectl rollout status deployment/api\nkubectl rollout undo deployment/api\n```"
+  },
+  {
+    "id": "kubernetes-007",
+    "title": "Kubernetes Fundamentals",
+    "source": "kubernetes.md",
+    "chunk_index": 7,
+    "text": "s --sort-by=.metadata.creationTimestamp\nkubectl apply -f deployment.yaml\nkubectl rollout status deployment/api\nkubectl rollout undo deployment/api\n```\n\n`kubectl get` lists resources, `kubectl describe` provides detailed state and recent events, and `kubectl logs` displays container output. For a multi-container Pod, use `-c <container-name>` to select a container. When debugging a workload, check its state, events, logs, image name, resource constraints, configuration, and Service endpoints rather than assuming the application code is the only possible cause.\n\n## Common Troubleshooting Patterns"
+  },
+  {
+    "id": "kubernetes-008",
+    "title": "Kubernetes Fundamentals",
+    "source": "kubernetes.md",
+    "chunk_index": 8,
+    "text": "raints, configuration, and Service endpoints rather than assuming the application code is the only possible cause.\n\n## Common Troubleshooting Patterns\n\n`ImagePullBackOff` means Kubernetes is having trouble pulling an image; inspect the image reference, registry availability, and pull credentials. `CrashLoopBackOff` means a container repeatedly exits and Kubernetes is backing off before restarting it; examine current and previous logs, startup configuration, and probes. A Pod in `Pending` may be unschedulable because of resource requests, node selectors, taints, or storage constraints. A Service that cannot reach its backends often has a selector-label mismatch, incorrect target port, or an application that is not listening on the expected interface and port.\n\n## Security and Operational Practices"
+  },
+  {
+    "id": "kubernetes-009",
+    "title": "Kubernetes Fundamentals",
+    "source": "kubernetes.md",
+    "chunk_index": 9,
+    "text": "el mismatch, incorrect target port, or an application that is not listening on the expected interface and port.\n\n## Security and Operational Practices\n\nRun containers with only the permissions they need. Use least-privilege RBAC, avoid privileged containers unless strictly necessary, and prefer non-root execution when the image and application support it. Keep images small and patched, pin versions deliberately, and scan images through an established security process. Use namespaces to organize workloads, but do not treat namespaces alone as a complete security boundary. Resource requests, limits, probes, logs, and rollout checks make applications easier to operate reliably."
+  },
+  {
+    "id": "postgresql-000",
+    "title": "PostgreSQL Fundamentals",
+    "source": "postgresql.md",
+    "chunk_index": 0,
+    "text": "# PostgreSQL Fundamentals\n\n## What PostgreSQL Is\n\nPostgreSQL is an open-source relational database management system. It stores data in tables with defined schemas and supports SQL for querying and modifying records. PostgreSQL provides transactions, constraints, indexes, views, joins, and concurrency control. It is frequently used as the persistent data store behind web APIs and other application services.\n\nA database server can host multiple databases, and each database can contain schemas and database objects such as tables, views, sequences, and functions. A role represents a database identity and can be granted permissions. In application deployments, development, testing, and production environments should use separate credentials and appropriately scoped permissions.\n\n## Tables, Primary Keys, and Constraints"
+  },
+  {
+    "id": "postgresql-001",
+    "title": "PostgreSQL Fundamentals",
+    "source": "postgresql.md",
+    "chunk_index": 1,
+    "text": ", testing, and production environments should use separate credentials and appropriately scoped permissions.\n\n## Tables, Primary Keys, and Constraints\n\nA table represents rows of related data. Each column has a data type, such as `integer`, `text`, `boolean`, `date`, `timestamp with time zone`, or `uuid`. A primary key uniquely identifies each row. A foreign key enforces a relationship to a key in another table or in the same table. `NOT NULL`, `UNIQUE`, and `CHECK` constraints encode data rules in the database rather than relying solely on application code.\n\nExample schema:\n\n```sql\nCREATE TABLE projects (\n    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n    name TEXT NOT NULL UNIQUE,\n    created_at TIMESTAMPTZ NOT NULL DEFAULT now()\n);"
+  },
+  {
+    "id": "postgresql-002",
+    "title": "PostgreSQL Fundamentals",
+    "source": "postgresql.md",
+    "chunk_index": 2,
+    "text": "projects (\n    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n    name TEXT NOT NULL UNIQUE,\n    created_at TIMESTAMPTZ NOT NULL DEFAULT now()\n);\n\nCREATE TABLE tasks (\n    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n    project_id BIGINT NOT NULL REFERENCES projects(id),\n    title TEXT NOT NULL,\n    completed BOOLEAN NOT NULL DEFAULT FALSE,\n    created_at TIMESTAMPTZ NOT NULL DEFAULT now()\n);\n```\n\nThe `tasks.project_id` foreign key prevents a task from referencing a project that does not exist. The `completed` column defaults to `FALSE` when a new task is created without an explicit value. Defaults are not substitutes for constraints: `NOT NULL` still matters when a column must always contain a value.\n\n## Basic SQL Queries"
+  },
+  {
+    "id": "postgresql-003",
+    "title": "PostgreSQL Fundamentals",
+    "source": "postgresql.md",
+    "chunk_index": 3,
+    "text": "xplicit value. Defaults are not substitutes for constraints: `NOT NULL` still matters when a column must always contain a value.\n\n## Basic SQL Queries\n\nUse `SELECT` to read rows, `INSERT` to add rows, `UPDATE` to modify rows, and `DELETE` to remove rows. A `WHERE` clause restricts which rows an operation affects. An `ORDER BY` clause controls the returned order, and `LIMIT` caps the number of rows returned.\n\n```sql\nSELECT id, title, created_at\nFROM tasks\nWHERE project_id = 1 AND completed = FALSE\nORDER BY created_at DESC\nLIMIT 20;\n\nINSERT INTO tasks (project_id, title)\nVALUES (1, 'Add API tests')\nRETURNING id, title;\n\nUPDATE tasks\nSET completed = TRUE\nWHERE id = 42\nRETURNING id, completed;\n```\n\nAn `UPDATE` or `DELETE` statement without an appropriate `WHERE` clause may affect every row in a table. Review destructive statements carefully and use a transaction when a sequence of changes must succeed or fail together.\n\n## Joins and Aggregation"
+  },
+  {
+    "id": "postgresql-004",
+    "title": "PostgreSQL Fundamentals",
+    "source": "postgresql.md",
+    "chunk_index": 4,
+    "text": "ble. Review destructive statements carefully and use a transaction when a sequence of changes must succeed or fail together.\n\n## Joins and Aggregation\n\nA join combines rows using a relationship between tables. An `INNER JOIN` returns rows with matching records on both sides. A `LEFT JOIN` preserves every row from the left side, even when there is no matching row on the right. Aggregate functions such as `COUNT`, `SUM`, `AVG`, `MIN`, and `MAX` summarize groups of rows.\n\n```sql\nSELECT p.name, COUNT(t.id) AS task_count\nFROM projects AS p\nLEFT JOIN tasks AS t ON t.project_id = p.id\nGROUP BY p.id, p.name\nORDER BY task_count DESC;\n```\n\nThis query includes projects with no tasks because it uses a left join. `COUNT(t.id)` returns zero for a project with no matching task rows; counting all rows after an outer join can produce a different result.\n\n## Transactions and ACID"
+  },
+  {
+    "id": "postgresql-005",
+    "title": "PostgreSQL Fundamentals",
+    "source": "postgresql.md",
+    "chunk_index": 5,
+    "text": "returns zero for a project with no matching task rows; counting all rows after an outer join can produce a different result.\n\n## Transactions and ACID\n\nA transaction groups database operations into one logical unit. PostgreSQL transactions support the ACID properties: atomicity, consistency, isolation, and durability. `BEGIN` starts an explicit transaction, `COMMIT` makes its changes permanent, and `ROLLBACK` discards uncommitted changes.\n\n```sql\nBEGIN;\nUPDATE accounts SET balance = balance - 100 WHERE id = 1;\nUPDATE accounts SET balance = balance + 100 WHERE id = 2;\nCOMMIT;\n```\n\nThe example illustrates a transfer that should update both accounts together. A production implementation must also validate that the source account exists and has sufficient funds, handle concurrent updates safely, and verify that each update affected the expected number of rows. If an error occurs before commit, the transaction can be rolled back."
+  },
+  {
+    "id": "postgresql-006",
+    "title": "PostgreSQL Fundamentals",
+    "source": "postgresql.md",
+    "chunk_index": 6,
+    "text": "pdates safely, and verify that each update affected the expected number of rows. If an error occurs before commit, the transaction can be rolled back.\n\nPostgreSQL uses multiversion concurrency control (MVCC) so concurrent transactions can work with consistent versions of rows. Isolation levels control which concurrent changes a transaction can observe. Applications should be prepared to retry certain transactions when concurrency conflicts or serialization failures occur.\n\n## Indexes and Query Performance\n\nAn index can speed up lookups and joins by helping PostgreSQL find matching rows without scanning the entire table. Indexes also consume storage and add work to inserts, updates, and deletes, so adding an index to every column is not a good strategy. B-tree is the default index type and supports many equality and range queries. Other index types, such as GIN, are useful for particular data types and operators."
+  },
+  {
+    "id": "postgresql-007",
+    "title": "PostgreSQL Fundamentals",
+    "source": "postgresql.md",
+    "chunk_index": 7,
+    "text": "e default index type and supports many equality and range queries. Other index types, such as GIN, are useful for particular data types and operators.\n\n```sql\nCREATE INDEX idx_tasks_project_created\nON tasks (project_id, created_at DESC);\n```\n\nA multicolumn index is most effective when its column order matches useful query patterns. Use `EXPLAIN` to inspect a planned query and `EXPLAIN ANALYZE` to execute it and report actual timings and row counts. Analyze the query plan before adding indexes based only on intuition. Keep database statistics current so the planner can make informed choices.\n\n## Connecting from a Python API"
+  },
+  {
+    "id": "postgresql-008",
+    "title": "PostgreSQL Fundamentals",
+    "source": "postgresql.md",
+    "chunk_index": 8,
+    "text": "re adding indexes based only on intuition. Keep database statistics current so the planner can make informed choices.\n\n## Connecting from a Python API\n\nA service commonly reads database connection settings from environment variables rather than hard-coding credentials. A connection string may include the host, port, database name, username, and password; secrets should not be committed to source control. Connection pooling can reduce the overhead of repeatedly opening connections, especially in a request-driven API.\n\nAlways use parameterized queries when including user-supplied values. Do not build SQL by concatenating raw input into a query string, because doing so can create SQL injection vulnerabilities. Use a database driver's parameters or a reputable query builder or ORM. The parameter syntax differs between drivers, so follow the library's documentation.\n\n## Backups, Migrations, and Reliability"
+  },
+  {
+    "id": "postgresql-009",
+    "title": "PostgreSQL Fundamentals",
+    "source": "postgresql.md",
+    "chunk_index": 9,
+    "text": "le query builder or ORM. The parameter syntax differs between drivers, so follow the library's documentation.\n\n## Backups, Migrations, and Reliability\n\nBackups should be tested by restoring them, not merely by confirming that a backup command completed. A schema migration records a controlled change to database structure, such as creating a table or adding an index. Keep migrations in version control and apply them consistently across environments. For a production service, plan for connection limits, timeouts, slow queries, disk capacity, monitoring, and restore procedures.\n\nA database container's writable filesystem is not a durable backup. Use a persistent volume for local development when data must survive container replacement, and maintain a separate backup strategy for valuable data. Protect database credentials, restrict network exposure, and grant an application role only the permissions its tasks require."
+  },
+  {
+    "id": "python-000",
+    "title": "Python Fundamentals for Backend and Data Applications",
+    "source": "python.md",
+    "chunk_index": 0,
+    "text": "# Python Fundamentals for Backend and Data Applications\n\n## Python's Role in an Application\n\nPython is a general-purpose programming language used for automation, APIs, data processing, machine learning, and developer tools. A Python program is commonly organized into modules and packages. A module is usually a `.py` file, while a package groups related modules under a directory. Clear module boundaries make code easier to test, reuse, and maintain.\n\nPython uses dynamic typing, but variables still refer to objects with particular types. Type hints describe expected inputs and outputs and help editors, reviewers, and static-analysis tools understand a program. Type hints do not automatically validate arbitrary runtime data; validation requires explicit checks or a library designed for that purpose.\n\n```python\nfrom collections.abc import Sequence"
+  },
+  {
+    "id": "python-001",
+    "title": "Python Fundamentals for Backend and Data Applications",
+    "source": "python.md",
+    "chunk_index": 1,
+    "text": "te arbitrary runtime data; validation requires explicit checks or a library designed for that purpose.\n\n```python\nfrom collections.abc import Sequence\n\ndef average(values: Sequence[float]) -> float:\n    if not values:\n        raise ValueError(\"values must not be empty\")\n    return sum(values) / len(values)\n```\n\nThe annotation communicates that `average` expects a sequence of numbers and returns a float. The explicit empty-sequence check prevents division by zero and makes the failure understandable to callers.\n\n## Virtual Environments and Dependencies"
+  },
+  {
+    "id": "python-002",
+    "title": "Python Fundamentals for Backend and Data Applications",
+    "source": "python.md",
+    "chunk_index": 2,
+    "text": "The explicit empty-sequence check prevents division by zero and makes the failure understandable to callers.\n\n## Virtual Environments and Dependencies\n\nA virtual environment isolates a project's installed Python packages from other projects and the system Python installation. This helps avoid dependency conflicts. Create one with `python -m venv .venv` and activate it using the command appropriate for your shell. Install dependencies with the environment's Python interpreter, for example `python -m pip install fastapi`, so the package installer corresponds to the interpreter being used.\n\nA project should record its direct dependencies in a dependency file such as `requirements.txt` or in the project's chosen packaging configuration. Reproducible deployments require deliberate dependency versions and a documented installation process. The `.venv` directory, local secrets, bytecode caches, and other generated files generally should not be committed to Git.\n\nUseful commands include:"
+  },
+  {
+    "id": "python-003",
+    "title": "Python Fundamentals for Backend and Data Applications",
+    "source": "python.md",
+    "chunk_index": 3,
+    "text": ". The `.venv` directory, local secrets, bytecode caches, and other generated files generally should not be committed to Git.\n\nUseful commands include:\n\n```bash\npython --version\npython -m venv .venv\npython -m pip install -r requirements.txt\npython -m pip show fastapi\npython -m pip freeze\n```\n\n`python -m pip show` reports information about a package installed for the selected interpreter. If an editor reports that an import cannot be resolved, check which interpreter the editor uses before reinstalling packages. The terminal and editor can point to different environments.\n\n## Functions, Collections, and Data Structures\n\nFunctions package behavior into reusable units. Use descriptive names, keep functions focused, and return values instead of relying on unexpected global state. A list is ordered and mutable, a tuple is ordered and immutable, a dictionary maps keys to values, and a set stores unique elements. Choosing a suitable data structure improves both clarity and performance."
+  },
+  {
+    "id": "python-004",
+    "title": "Python Fundamentals for Backend and Data Applications",
+    "source": "python.md",
+    "chunk_index": 4,
+    "text": "mutable, a dictionary maps keys to values, and a set stores unique elements. Choosing a suitable data structure improves both clarity and performance.\n\n```python\ndocuments = [\n    {\"id\": \"doc-1\", \"title\": \"Kubernetes Basics\", \"text\": \"A Pod is a deployable unit.\"},\n    {\"id\": \"doc-2\", \"title\": \"PostgreSQL Basics\", \"text\": \"A transaction groups database operations.\"},\n]\n\nby_id = {document[\"id\"]: document for document in documents}\nprint(by_id[\"doc-1\"][\"title\"])\n```\n\nThe dictionary comprehension builds an index by document ID. A dictionary lookup is generally more appropriate than scanning a list repeatedly when many lookups by the same key are needed.\n\n## Reading Files Safely"
+  },
+  {
+    "id": "python-005",
+    "title": "Python Fundamentals for Backend and Data Applications",
+    "source": "python.md",
+    "chunk_index": 5,
+    "text": "dictionary lookup is generally more appropriate than scanning a list repeatedly when many lookups by the same key are needed.\n\n## Reading Files Safely\n\nUse a context manager when opening files. It ensures that the file is closed even if processing raises an exception. Specify an encoding for text files so behavior is consistent across environments. When recursively loading documents, filter by the intended file extension and handle missing directories or unreadable files explicitly.\n\n```python\nfrom pathlib import Path\n\ndef read_markdown(path: Path) -> str:\n    if path.suffix.lower() != \".md\":\n        raise ValueError(f\"Expected a Markdown file: {path}\")\n    return path.read_text(encoding=\"utf-8\")\n```\n\n`pathlib.Path` offers cross-platform path handling. Keeping file discovery separate from parsing makes an ingestion pipeline easier to test: one function can discover files, another can read content, and another can turn content into chunks with metadata."
+  },
+  {
+    "id": "python-006",
+    "title": "Python Fundamentals for Backend and Data Applications",
+    "source": "python.md",
+    "chunk_index": 6,
+    "text": "ingestion pipeline easier to test: one function can discover files, another can read content, and another can turn content into chunks with metadata.\n\n## Exceptions and Resource Cleanup\n\nExceptions represent errors or unusual conditions that a caller may need to handle. Catch specific exceptions when recovery is possible, and avoid broad `except Exception` blocks that silently hide programming defects. Include useful context in error messages, but do not log passwords, access tokens, or other secrets.\n\n```python\nfrom pathlib import Path\n\ndef load_text(path: Path) -> str:\n    try:\n        return path.read_text(encoding=\"utf-8\")\n    except FileNotFoundError as exc:\n        raise FileNotFoundError(f\"Document does not exist: {path}\") from exc\n    except UnicodeDecodeError as exc:\n        raise ValueError(f\"Document is not valid UTF-8 text: {path}\") from exc\n```"
+  },
+  {
+    "id": "python-007",
+    "title": "Python Fundamentals for Backend and Data Applications",
+    "source": "python.md",
+    "chunk_index": 7,
+    "text": "not exist: {path}\") from exc\n    except UnicodeDecodeError as exc:\n        raise ValueError(f\"Document is not valid UTF-8 text: {path}\") from exc\n```\n\nThe `raise ... from exc` syntax preserves the original exception as the cause, which helps debugging. Use `finally` or context managers when a resource must be cleaned up; context managers are the usual choice for files and many database connections.\n\n## Testing with pytest\n\nAutomated tests check that code behaves as expected and help prevent regressions. Unit tests should verify normal cases, edge cases, and failure cases. For a chunking function, useful cases include empty input, a short document, text longer than the chunk limit, heading boundaries, and a final chunk that is shorter than the others.\n\n```python\ndef split_text(text: str, max_chars: int) -> list[str]:\n    if max_chars <= 0:\n        raise ValueError(\"max_chars must be positive\")\n    return [text[i : i + max_chars] for i in range(0, len(text), max_chars)]"
+  },
+  {
+    "id": "python-008",
+    "title": "Python Fundamentals for Backend and Data Applications",
+    "source": "python.md",
+    "chunk_index": 8,
+    "text": "if max_chars <= 0:\n        raise ValueError(\"max_chars must be positive\")\n    return [text[i : i + max_chars] for i in range(0, len(text), max_chars)]\n\ndef test_split_text_preserves_all_characters() -> None:\n    source = \"abcdefgh\"\n    chunks = split_text(source, max_chars=3)\n    assert chunks == [\"abc\", \"def\", \"gh\"]\n    assert \"\".join(chunks) == source\n```\n\nThis simple splitter uses fixed character lengths and may cut through words or Markdown structures; a production ingestion pipeline may instead prefer paragraph- or heading-aware splitting. The test illustrates an important invariant: if the chosen strategy is intended to preserve the complete source text, concatenating its chunks should reproduce the input exactly.\n\n## HTTP APIs with FastAPI"
+  },
+  {
+    "id": "python-009",
+    "title": "Python Fundamentals for Backend and Data Applications",
+    "source": "python.md",
+    "chunk_index": 9,
+    "text": "sen strategy is intended to preserve the complete source text, concatenating its chunks should reproduce the input exactly.\n\n## HTTP APIs with FastAPI\n\nFastAPI is a Python framework for building HTTP APIs. A route maps an HTTP method and path to a Python function. Pydantic models can validate and parse request data. Keep input validation, business logic, and persistence sufficiently separated that they can be tested independently.\n\n```python\nfrom fastapi import FastAPI\nfrom pydantic import BaseModel, Field\n\napp = FastAPI()\n\nclass SearchRequest(BaseModel):\n    query: str = Field(min_length=1, max_length=500)\n    limit: int = Field(default=5, ge=1, le=20)\n\n@app.post(\"/search\")\ndef search(request: SearchRequest) -> dict[str, object]:\n    return {\"query\": request.query, \"limit\": request.limit, \"results\": []}\n```"
+  },
+  {
+    "id": "python-010",
+    "title": "Python Fundamentals for Backend and Data Applications",
+    "source": "python.md",
+    "chunk_index": 10,
+    "text": "ost(\"/search\")\ndef search(request: SearchRequest) -> dict[str, object]:\n    return {\"query\": request.query, \"limit\": request.limit, \"results\": []}\n```\n\nThis is only a minimal endpoint skeleton; it validates the request but does not perform semantic retrieval. A search service would embed the query, request nearest vectors from a vector database, and serialize the matching document metadata and scores. An API should return predictable errors and avoid exposing internal stack traces or secrets to clients.\n\n## Logging and Configuration\n\nUse the `logging` module instead of sprinkling `print` calls throughout a long-running service. Include enough information to diagnose a problem, such as an operation name, request identifier, or document ID, while avoiding unnecessary personal data and secrets. Configure log levels by environment so development can be more verbose than production."
+  },
+  {
+    "id": "python-011",
+    "title": "Python Fundamentals for Backend and Data Applications",
+    "source": "python.md",
+    "chunk_index": 11,
+    "text": "ment ID, while avoiding unnecessary personal data and secrets. Configure log levels by environment so development can be more verbose than production.\n\nRead environment-specific settings from environment variables or a configuration system. Do not commit real `.env` files containing secrets. A `.env.example` file can document required variable names with placeholder values. Configuration should be validated at startup when missing or malformed values would prevent the application from working correctly.\n\n## Practical Engineering Guidelines"
+  },
+  {
+    "id": "python-012",
+    "title": "Python Fundamentals for Backend and Data Applications",
+    "source": "python.md",
+    "chunk_index": 12,
+    "text": "ld be validated at startup when missing or malformed values would prevent the application from working correctly.\n\n## Practical Engineering Guidelines\n\nPrefer small functions with clear contracts, meaningful variable names, and explicit error handling. Separate I/O from pure transformation logic where possible. For an ingestion system, file reading and database writes are I/O, while normalization, chunk construction, and metadata validation can often be tested as deterministic transformations. Store source identifiers and chunk indices so retrieved passages can be traced back to their original documents. Add tests before making the pipeline more complex, and document setup commands so another developer can reproduce the project locally."
+  }
+]

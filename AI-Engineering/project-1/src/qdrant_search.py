@@ -88,6 +88,7 @@ def main():
                 break
 
             if not query:
+                print("Type query!")
                 continue
 
             query_vector = model.encode(

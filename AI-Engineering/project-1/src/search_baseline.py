@@ -10,7 +10,7 @@ CHUNKS_FILE = PROJECT_ROOT / "data" / "chunks.json"
 with CHUNKS_FILE.open(encoding="utf-8") as file:
     chunks = json.load(file)
 
-def cosine_similarity(a,b):
+def cosine_similarity(a,b):www
     return np.dot(a,b) / (np.linalg.norm(a) * np.linalg.norm(b))
 
 model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")

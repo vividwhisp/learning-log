@@ -1,0 +1,14 @@
+[
+  {
+    "query": "How do Kubernetes pods work?",
+    "expected_source": "kubernetes.md"
+  },
+  {
+    "query": "How do I define a function in Python?",
+    "expected_source": "python.md"
+  },
+  {
+    "query": "How does PostgreSQL handle transactions?",
+    "expected_source": "postgresql.md"
+  }
+]

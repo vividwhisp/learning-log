@@ -63,3 +63,6 @@ def generate_answer(question: str, results: list[dict]) -> str:
         raise RuntimeError("The LLM returned an empty answer.")
 
     return answer
+
+def generate_rag_answer(question: str, results: list[dict]) -> str:
+    return generate_answer(question, results)

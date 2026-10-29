@@ -5,6 +5,9 @@ from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel, Field
 
 from src.search import SemanticSearch
+from src.generation import generate_rag_answer
+
+
 
 
 @asynccontextmanager
@@ -44,6 +47,18 @@ class SearchResponse(BaseModel):
     total_results: int
     results: list[SearchResult]
 
+class SourceCitation(BaseModel):
+    title: str
+    source: str
+    chunk_index: int | None
+    text: str
+
+
+class AskResponse(BaseModel):
+    query: str
+    answer: str
+    sources: list[SourceCitation]
+
 
 @app.get("/health")
 def health():
@@ -72,4 +87,47 @@ def search_documents(
         query=body.query,
         total_results=len(results),
         results=results,
+    )
+
+@app.post("/ask", response_model=AskResponse)
+def ask_question(
+    body: SearchRequest,
+    request: Request,
+):
+    if not body.query.strip():
+        raise HTTPException(
+            status_code=422,
+            detail="Query cannot be empty or whitespace.",
+        )
+
+    searcher = request.app.state.searcher
+
+    results = searcher.search(
+        query=body.query,
+        limit=body.limit,
+    )
+
+    if not results:
+        return AskResponse(
+            query=body.query,
+            answer="I couldn't find relevant information in the available documents.",
+            sources=[],
+        )
+
+    answer = generate_rag_answer(body.query, results)
+
+    sources = [
+        SourceCitation(
+            title=result["title"],
+            source=result["source"],
+            chunk_index=result["chunk_index"],
+            text=result["text"],
+        )
+        for result in results
+    ]
+
+    return AskResponse(
+        query=body.query,
+        answer=answer,
+        sources=sources,
     )

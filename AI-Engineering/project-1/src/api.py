@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 
 from src.search import SemanticSearch
 from src.generation import generate_rag_answer
+from src.citations import extract_citations
 
 
 
@@ -116,16 +117,7 @@ def ask_question(
 
     answer = generate_rag_answer(body.query, results)
 
-    sources = [
-        SourceCitation(
-            title=result["title"],
-            source=result["source"],
-            chunk_index=result["chunk_index"],
-            text=result["text"],
-        )
-        for result in results
-    ]
-
+    sources = extract_citations(answer, results)
     return AskResponse(
         query=body.query,
         answer=answer,

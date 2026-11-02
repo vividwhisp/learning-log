@@ -1,10 +1,12 @@
 import json
 from pathlib import Path
 
-from src.search import SemanticSearch
+from src.hybrid_search import HybridSearch
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 QUERIES_FILE = PROJECT_ROOT / "eval" / "queries.json"
+
+LIMIt = 5
 
 def main():
     queries = json.loads(QUERIES_FILE.read_text())

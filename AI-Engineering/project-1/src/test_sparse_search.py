@@ -16,6 +16,6 @@ for query in queries:
         print(
             result["source"],
             result["chunk_index"],
-            result["score"],
+            f"{result["score"]:.4f}",
         )
         print(result["text"][:200])

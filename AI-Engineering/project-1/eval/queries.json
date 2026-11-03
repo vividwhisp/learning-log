@@ -1,14 +1,98 @@
 [
   {
-    "query": "How do Kubernetes pods work?",
-    "expected_source": "kubernetes.md"
+    "query": "What is the smallest deployable unit in Kubernetes, and how do its containers communicate?",
+    "relevant_chunks": [
+      {"source": "kubernetes.md", "chunk_index": 1}
+    ]
   },
   {
-    "query": "How do I define a function in Python?",
-    "expected_source": "python.md"
+    "query": "How does Kubernetes maintain the desired number of application replicas during deployments?",
+    "relevant_chunks": [
+      {"source": "kubernetes.md", "chunk_index": 1},
+      {"source": "kubernetes.md", "chunk_index": 2}
+    ]
   },
   {
-    "query": "How does PostgreSQL handle transactions?",
-    "expected_source": "postgresql.md"
+    "query": "How can I expose a group of Pods through a stable network endpoint?",
+    "relevant_chunks": [
+      {"source": "kubernetes.md", "chunk_index": 3},
+      {"source": "kubernetes.md", "chunk_index": 4}
+    ]
+  },
+  {
+    "query": "What is the difference between readiness, liveness, and startup probes?",
+    "relevant_chunks": [
+      {"source": "kubernetes.md", "chunk_index": 5}
+    ]
+  },
+  {
+    "query": "Why does a container enter CrashLoopBackOff and how should I debug it?",
+    "relevant_chunks": [
+      {"source": "kubernetes.md", "chunk_index": 8}
+    ]
+  },
+  {
+    "query": "How do database transactions guarantee that a group of operations succeeds or fails together?",
+    "relevant_chunks": [
+      {"source": "postgresql.md", "chunk_index": 5}
+    ]
+  },
+  {
+    "query": "How does PostgreSQL handle concurrent transactions and consistent row versions?",
+    "relevant_chunks": [
+      {"source": "postgresql.md", "chunk_index": 6}
+    ]
+  },
+  {
+    "query": "How can I investigate a slow PostgreSQL query and decide whether an index is useful?",
+    "relevant_chunks": [
+      {"source": "postgresql.md", "chunk_index": 6},
+      {"source": "postgresql.md", "chunk_index": 7}
+    ]
+  },
+  {
+    "query": "How can I include rows from one table even when there is no matching row in another table?",
+    "relevant_chunks": [
+      {"source": "postgresql.md", "chunk_index": 4}
+    ]
+  },
+  {
+    "query": "How do I prevent SQL injection when using user input in database queries?",
+    "relevant_chunks": [
+      {"source": "postgresql.md", "chunk_index": 8}
+    ]
+  },
+  {
+    "query": "How do I define a Python function with type hints and a return value?",
+    "relevant_chunks": [
+      {"source": "python.md", "chunk_index": 1},
+      {"source": "python.md", "chunk_index": 3}
+    ]
+  },
+  {
+    "query": "Why should I use a virtual environment and how do I install packages into it?",
+    "relevant_chunks": [
+      {"source": "python.md", "chunk_index": 2},
+      {"source": "python.md", "chunk_index": 3}
+    ]
+  },
+  {
+    "query": "How can I efficiently retrieve a document by its unique identifier using Python?",
+    "relevant_chunks": [
+      {"source": "python.md", "chunk_index": 4}
+    ]
+  },
+  {
+    "query": "How should I handle file-related exceptions and ensure resources are cleaned up?",
+    "relevant_chunks": [
+      {"source": "python.md", "chunk_index": 6},
+      {"source": "python.md", "chunk_index": 7}
+    ]
+  },
+  {
+    "query": "How do I create a FastAPI endpoint that validates incoming request data?",
+    "relevant_chunks": [
+      {"source": "python.md", "chunk_index": 9}
+    ]
   }
 ]

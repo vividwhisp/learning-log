@@ -10,99 +10,119 @@ QUERIES_FILE = PROJECT_ROOT / "eval" / "queries.json"
 LIMIT = 5
 
 
-def evaluate_retriever(name, search_function, queries):
-    hits = 0
-    reciprocal_ranks = []
+def chunk_id(result):
+    return (result["source"], result["chunk_index"])
 
-    print(f"\n{'=' * 55}")
+
+def evaluate_retriever(name, search_function, queries):
+    total_relevant = 0
+    retrieved_relevant = 0
+    reciprocal_ranks = []
+    successful_queries = 0
+
+    print(f"\n{'=' * 65}")
     print(f"Evaluating: {name}")
-    print("=" * 55)
+    print("=" * 65)
 
     for item in queries:
         query = item["query"]
-        expected_source = item["expected_source"]
+
+        relevant = {
+            (chunk["source"], chunk["chunk_index"])
+            for chunk in item["relevant_chunks"]
+        }
 
         results = search_function(query, limit=LIMIT)
+        retrieved = [chunk_id(result) for result in results]
 
         relevant_ranks = [
             rank
             for rank, result in enumerate(results, start=1)
-            if result["source"].endswith(expected_source)
+            if chunk_id(result) in relevant
         ]
 
-        found = bool(relevant_ranks)
-        hits += int(found)
+        found_relevant = len(set(retrieved) & relevant)
 
-        reciprocal_rank = (
-            1 / relevant_ranks[0] if found else 0
-        )
-        reciprocal_ranks.append(reciprocal_rank)
+        total_relevant += len(relevant)
+        retrieved_relevant += found_relevant
+
+        if relevant_ranks:
+            successful_queries += 1
+            reciprocal_ranks.append(1 / relevant_ranks[0])
+        else:
+            reciprocal_ranks.append(0)
 
         print(f"\nQuery: {query}")
-        print(f"Expected: {expected_source}")
-        print(f"Found in top {LIMIT}: {found}")
-        print(f"Reciprocal rank: {reciprocal_rank:.4f}")
+        print(f"Relevant chunks: {sorted(relevant)}")
+        print(f"Relevant chunks found: {found_relevant}/{len(relevant)}")
 
         for rank, result in enumerate(results, start=1):
+            marker = "*" if chunk_id(result) in relevant else " "
             print(
-                f"{rank}. {result['source']} "
+                f"{marker} {rank}. {result['source']} "
                 f"(chunk={result['chunk_index']}, "
                 f"score={result['score']:.4f})"
             )
 
-    recall = hits / len(queries)
-    mrr = sum(reciprocal_ranks) / len(queries)
+    recall = (
+        retrieved_relevant / total_relevant
+        if total_relevant else 0
+    )
+    mrr = sum(reciprocal_ranks) / len(queries) if queries else 0
+    hit_rate = successful_queries / len(queries) if queries else 0
 
     return {
         "name": name,
         "recall": recall,
         "mrr": mrr,
+        "hit_rate": hit_rate,
     }
 
 
 def main():
-    queries = json.loads(QUERIES_FILE.read_text())
+    queries = json.loads(QUERIES_FILE.read_text(encoding="utf-8"))
+
+    if not queries:
+        raise ValueError("Evaluation dataset is empty.")
 
     searcher = HybridSearch()
 
     try:
-        results = []
-
-        results.append(
+        results = [
             evaluate_retriever(
                 "Dense Retrieval",
                 searcher.dense_search.search,
                 queries,
-            )
-        )
-
-        results.append(
+            ),
             evaluate_retriever(
                 "Sparse Retrieval (BM25)",
                 searcher.sparse_search.search,
                 queries,
-            )
-        )
-
-        results.append(
+            ),
             evaluate_retriever(
                 "Hybrid Retrieval (RRF)",
                 searcher.search,
                 queries,
-            )
-        )
+            ),
+        ]
 
-        print("\n" + "=" * 55)
+        print("\n" + "=" * 65)
         print("FINAL COMPARISON")
-        print("=" * 55)
+        print("=" * 65)
 
-        print(f"{'Retriever':<28} {'Recall@5':<12} {'MRR@5'}")
+        print(
+            f"{'Retriever':<28}"
+            f"{'Recall@5':<12}"
+            f"{'MRR@5':<12}"
+            f"{'HitRate@5'}"
+        )
 
         for result in results:
             print(
-                f"{result['name']:<28} "
-                f"{result['recall']:<12.2%} "
-                f"{result['mrr']:.4f}"
+                f"{result['name']:<28}"
+                f"{result['recall']:<12.2%}"
+                f"{result['mrr']:<12.4f}"
+                f"{result['hit_rate']:.2%}"
             )
 
     finally:

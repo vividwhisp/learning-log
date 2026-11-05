@@ -3,6 +3,8 @@ import json
 from pathlib import Path
 
 from src.hybrid_search import HybridSearch
+from src.reranker import Reranker
+
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 QUERIES_FILE = PROJECT_ROOT / "eval" / "queries.json"
@@ -58,10 +60,12 @@ def evaluate_retriever(name, search_function, queries):
 
         for rank, result in enumerate(results, start=1):
             marker = "*" if chunk_id(result) in relevant else " "
+            score = result.get("rerank_score", result["score"])
+
             print(
                 f"{marker} {rank}. {result['source']} "
                 f"(chunk={result['chunk_index']}, "
-                f"score={result['score']:.4f})"
+                f"score={score:.4f})"
             )
 
     recall = (
@@ -86,8 +90,22 @@ def main():
         raise ValueError("Evaluation dataset is empty.")
 
     searcher = HybridSearch()
+    reranker = Reranker()
 
     try:
+        def hybrid_reranked_search(query, limit=5):
+            candidates = searcher.search(
+                query,
+                limit=20,
+                fetch_limit=20,
+            )
+
+            return reranker.rerank(
+                query,
+                candidates,
+                limit=limit,
+            )
+
         results = [
             evaluate_retriever(
                 "Dense Retrieval",
@@ -102,6 +120,11 @@ def main():
             evaluate_retriever(
                 "Hybrid Retrieval (RRF)",
                 searcher.search,
+                queries,
+            ),
+            evaluate_retriever(
+                "Hybrid + Cross-Encoder",
+                hybrid_reranked_search,
                 queries,
             ),
         ]

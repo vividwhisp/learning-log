@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel, Field
 
-from src.search import SemanticSearch
+from src.reranked_search import RerankedSearch
 from src.generation import generate_rag_answer
 from src.citations import extract_citations
 
@@ -14,7 +14,7 @@ from src.citations import extract_citations
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Initialize the model and Qdrant once at startup.
-    app.state.searcher = SemanticSearch()
+    app.state.searcher = RerankedSearch()
 
     try:
         yield
@@ -40,7 +40,8 @@ class SearchResult(BaseModel):
     source: str
     chunk_index: int | None
     text: str
-    score: float
+    retrieval_score : float
+    rerank_score : float
 
 
 class SearchResponse(BaseModel):

@@ -16,11 +16,12 @@ def chunk_id(result):
     return (result["source"], result["chunk_index"])
 
 
-def evaluate_retriever(name, search_function, queries):
+def evaluate_retriever(name, search_function, queries, debug_candidates=None,):
     total_relevant = 0
     retrieved_relevant = 0
     reciprocal_ranks = []
     successful_queries = 0
+    
 
     print(f"\n{'=' * 65}")
     print(f"Evaluating: {name}")
@@ -44,6 +45,28 @@ def evaluate_retriever(name, search_function, queries):
         ]
 
         found_relevant = len(set(retrieved) & relevant)
+        missing = relevant - set(retrieved)
+        if debug_candidates is not None:
+            data = debug_candidates[query]
+
+            for chunk in missing:
+               candidate_rank = next(
+                   (
+                       rank
+                       for rank, result in enumerate(
+                           data["candidates"], start = 1
+                       )
+                       if chunk_id(result) == chunk
+                   ),
+                   None,
+                ) 
+               if candidate_rank is None:
+                    print(f"ABSENT FROM CANDIDATES: {chunk}")
+               else:
+                    print(
+                        f"RERANKED BELOW TOP 5: {chunk} "
+                        f"(hybrid candidate rank: {candidate_rank})"
+                        )
 
         total_relevant += len(relevant)
         retrieved_relevant += found_relevant
@@ -91,6 +114,7 @@ def main():
 
     searcher = HybridSearch()
     reranker = Reranker()
+    debug_candidates = {}
 
     try:
         def hybrid_reranked_search(query, limit=5):
@@ -100,11 +124,17 @@ def main():
                 fetch_limit=20,
             )
 
-            return reranker.rerank(
+            reranked = reranker.rerank(
                 query,
                 candidates,
                 limit=limit,
             )
+            debug_candidates[query] = {
+                "candidates" : candidates,
+                "reranked" : reranked,
+            }
+            return reranked
+        
 
         results = [
             evaluate_retriever(
@@ -126,6 +156,7 @@ def main():
                 "Hybrid + Cross-Encoder",
                 hybrid_reranked_search,
                 queries,
+                debug_candidates=debug_candidates,
             ),
         ]
 

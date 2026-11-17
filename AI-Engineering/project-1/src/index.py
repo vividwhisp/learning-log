@@ -3,7 +3,7 @@ import json
 import uuid
 
 from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, PointStruct, VectorParams
+from qdrant_client.models import Distance, PointStruct, VectorParams, PayloadSchemaType
 from sentence_transformers import SentenceTransformer
 
 from src.config import (
@@ -49,7 +49,14 @@ def main():
                 distance=Distance.COSINE,
             ),
         )
+        client.create_payload_index(
+        collection_name=COLLECTION,
+        field_name="source",
+        field_schema=PayloadSchemaType.KEYWORD,
+        wait=True,
+        )
 
+        print("Created payload index for source.")
         points = []
 
         for chunk, embedding in zip(chunks, embeddings):

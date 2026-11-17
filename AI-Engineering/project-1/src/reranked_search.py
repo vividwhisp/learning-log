@@ -6,7 +6,7 @@ class RerankedSearch:
         self.hybrid_search = HybridSearch()
         self.reranker = Reranker()
 
-    def search(self, query: str, limit : int = 5, fetch_limit : init = 20) -> list[dict]:
+    def search(self, query: str, limit : int = 5, fetch_limit : int = 20) -> list[dict]:
         candidates = self.hybrid_search.search(
             query,
             limit=fetch_limit,

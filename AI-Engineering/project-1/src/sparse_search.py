@@ -22,7 +22,7 @@ class BM25Search:
 
         self.bm25 = BM25Okapi(self.tokenized_chunks)
 
-    def search(self, query: str, limit: int = 5) -> list[dict]:
+    def search(self, query: str, limit: int = 5, source : str | None = None) -> list[dict]:
         query = query.strip()
 
         if not query:
@@ -35,8 +35,15 @@ class BM25Search:
 
         scores = self.bm25.get_scores(tokenized_query)
 
+        eligible_indices = [
+            index
+            for index, chunk in enumerate(self.chunks)
+            if source is None or chunk["source"] == source
+
+        ]
+
         ranked_indices = sorted(
-            range(len(scores)),
+            eligible_indices,
             key=lambda index: scores[index],
             reverse=True,
         )

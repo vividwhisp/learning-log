@@ -21,7 +21,7 @@ class SemanticSearch:
             self.client.close()
             raise
 
-    def search(self, query:str, limit: int = 5) -> list[dict]:
+    def search(self, query:str, limit: int = 5, source : str | None = None) -> list[dict]:
         query = query.strip()
         if not query:
             return []
@@ -31,11 +31,24 @@ class SemanticSearch:
             convert_to_numpy=True,
 
         ).tolist()
+
+        query_filter = None
+
+        if source is not None:
+            query_filter = Filter(
+                must=[
+                    FieldCondition(
+                        key="source",
+                        match=MatchValue(value=source),
+                    )
+                ]
+            )
         response = self.client.query_points(
             collection_name = COLLECTION,
             query=query_vector,
             limit=limit,
             with_payload = True,
+            query_filter=query_filter,
         )
         results = []
 

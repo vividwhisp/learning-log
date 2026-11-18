@@ -1,0 +1,812 @@
+[
+  {
+    "id": 1,
+    "question": "What is a Kubernetes Pod?",
+    "expected_facts": [
+      "A Pod is the smallest deployable unit in Kubernetes",
+      "A Pod can contain one or more containers"
+    ],
+    "expected_sources": [
+      {
+        "source": "kubernetes.md",
+        "chunk_index": 1
+      }
+    ],
+    "answerability": "answerable",
+    "generated_answer": "A **Kubernetes Pod** is the smallest deployable unit in a Kubernetes cluster. It groups one or more closely‑related containers that run together, sharing a single network namespace (so the containers can reach each other via `localhost`) and optionally sharing storage volumes. Pods are meant to be disposable—if a node fails, a rollout occurs, or a controller decides a replacement is needed, the Pod can be terminated and a new one created. Because Pods are transient, applications should not depend on a Pod’s IP address remaining stable. [Source 2] also notes that Pods run on worker nodes, which host the actual application workloads in the cluster. [Source 1]",
+    "retrieved_results": [
+      {
+        "title": "Kubernetes Fundamentals",
+        "source": "kubernetes.md",
+        "chunk_index": 0,
+        "text": "# Kubernetes Fundamentals\n\n## What Kubernetes Does\n\nKubernetes is a platform for deploying and operating containerized applications across a cluster of machines. It provides a declarative API: instead of manually starting every container, an operator describes the desired state, and Kubernetes controllers work to move the actual state toward that desired state. Kubernetes does not build application images; images are typically built by a separate tool or CI pipeline and then referenced by workloads.\n\nA Kubernetes cluster contains a control plane and worker nodes. The control plane stores cluster state and makes scheduling and coordination decisions. Worker nodes run application workloads in Pods. In a managed Kubernetes service, the provider operates some or all of the control-plane components, while the user still configures workloads, access, networking, and resources.\n\n## Pods, Deployments, and ReplicaSets",
+        "score": 0.03252247488101534,
+        "retrieval_score": 0.03252247488101534,
+        "rerank_score": 6.700838088989258
+      },
+      {
+        "title": "Kubernetes Fundamentals",
+        "source": "kubernetes.md",
+        "chunk_index": 1,
+        "text": "of the control-plane components, while the user still configures workloads, access, networking, and resources.\n\n## Pods, Deployments, and ReplicaSets\n\nA Pod is the smallest deployable unit in Kubernetes. A Pod contains one or more closely related containers that share a network namespace and can share storage volumes. Containers inside the same Pod can communicate through `localhost`. Pods are disposable: a Pod may be replaced when a node fails, a rollout occurs, or a controller decides that replacement is needed. Applications should not rely on a Pod's IP address remaining stable.\n\nA Deployment manages a replicated application through ReplicaSets. It is commonly used for stateless services such as HTTP APIs. The Deployment declares the desired number of replicas and a Pod template. Kubernetes creates or updates Pods to match that declaration and supports rolling updates and rollbacks.\n\nExample Deployment:",
+        "score": 0.03252247488101534,
+        "retrieval_score": 0.03252247488101534,
+        "rerank_score": 5.9873151779174805
+      },
+      {
+        "title": "Kubernetes Fundamentals",
+        "source": "kubernetes.md",
+        "chunk_index": 2,
+        "text": "icas and a Pod template. Kubernetes creates or updates Pods to match that declaration and supports rolling updates and rollbacks.\n\nExample Deployment:\n\n```yaml\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: api\nspec:\n  replicas: 3\n  selector:\n    matchLabels:\n      app: api\n  template:\n    metadata:\n      labels:\n        app: api\n    spec:\n      containers:\n        - name: api\n          image: example/api:1.0.0\n          ports:\n            - containerPort: 8000\n          resources:\n            requests:\n              cpu: \"100m\"\n              memory: \"128Mi\"\n            limits:\n              cpu: \"500m\"\n              memory: \"256Mi\"\n```\n\nThe Deployment selector must match the labels on its Pod template. Resource requests describe the resources Kubernetes uses for scheduling. Limits constrain resource use, with CPU throttling and memory termination behavior depending on the resource and runtime. Values should be based on observation and load testing rather than copied blindly.",
+        "score": 0.030798389007344232,
+        "retrieval_score": 0.030798389007344232,
+        "rerank_score": 4.803857803344727
+      },
+      {
+        "title": "Kubernetes Fundamentals",
+        "source": "kubernetes.md",
+        "chunk_index": 8,
+        "text": "raints, configuration, and Service endpoints rather than assuming the application code is the only possible cause.\n\n## Common Troubleshooting Patterns\n\n`ImagePullBackOff` means Kubernetes is having trouble pulling an image; inspect the image reference, registry availability, and pull credentials. `CrashLoopBackOff` means a container repeatedly exits and Kubernetes is backing off before restarting it; examine current and previous logs, startup configuration, and probes. A Pod in `Pending` may be unschedulable because of resource requests, node selectors, taints, or storage constraints. A Service that cannot reach its backends often has a selector-label mismatch, incorrect target port, or an application that is not listening on the expected interface and port.\n\n## Security and Operational Practices",
+        "score": 0.03149801587301587,
+        "retrieval_score": 0.03149801587301587,
+        "rerank_score": 2.9654901027679443
+      },
+      {
+        "title": "Python Fundamentals for Backend and Data Applications",
+        "source": "python.md",
+        "chunk_index": 4,
+        "text": "mutable, a dictionary maps keys to values, and a set stores unique elements. Choosing a suitable data structure improves both clarity and performance.\n\n```python\ndocuments = [\n    {\"id\": \"doc-1\", \"title\": \"Kubernetes Basics\", \"text\": \"A Pod is a deployable unit.\"},\n    {\"id\": \"doc-2\", \"title\": \"PostgreSQL Basics\", \"text\": \"A transaction groups database operations.\"},\n]\n\nby_id = {document[\"id\"]: document for document in documents}\nprint(by_id[\"doc-1\"][\"title\"])\n```\n\nThe dictionary comprehension builds an index by document ID. A dictionary lookup is generally more appropriate than scanning a list repeatedly when many lookups by the same key are needed.\n\n## Reading Files Safely",
+        "score": 0.029910714285714284,
+        "retrieval_score": 0.029910714285714284,
+        "rerank_score": 2.743396043777466
+      }
+    ],
+    "extracted_citations": [
+      {
+        "title": "Kubernetes Fundamentals",
+        "source": "kubernetes.md",
+        "chunk_index": 0,
+        "text": "# Kubernetes Fundamentals\n\n## What Kubernetes Does\n\nKubernetes is a platform for deploying and operating containerized applications across a cluster of machines. It provides a declarative API: instead of manually starting every container, an operator describes the desired state, and Kubernetes controllers work to move the actual state toward that desired state. Kubernetes does not build application images; images are typically built by a separate tool or CI pipeline and then referenced by workloads.\n\nA Kubernetes cluster contains a control plane and worker nodes. The control plane stores cluster state and makes scheduling and coordination decisions. Worker nodes run application workloads in Pods. In a managed Kubernetes service, the provider operates some or all of the control-plane components, while the user still configures workloads, access, networking, and resources.\n\n## Pods, Deployments, and ReplicaSets"
+      },
+      {
+        "title": "Kubernetes Fundamentals",
+        "source": "kubernetes.md",
+        "chunk_index": 1,
+        "text": "of the control-plane components, while the user still configures workloads, access, networking, and resources.\n\n## Pods, Deployments, and ReplicaSets\n\nA Pod is the smallest deployable unit in Kubernetes. A Pod contains one or more closely related containers that share a network namespace and can share storage volumes. Containers inside the same Pod can communicate through `localhost`. Pods are disposable: a Pod may be replaced when a node fails, a rollout occurs, or a controller decides that replacement is needed. Applications should not rely on a Pod's IP address remaining stable.\n\nA Deployment manages a replicated application through ReplicaSets. It is commonly used for stateless services such as HTTP APIs. The Deployment declares the desired number of replicas and a Pod template. Kubernetes creates or updates Pods to match that declaration and supports rolling updates and rollbacks.\n\nExample Deployment:"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "question": "How does a Kubernetes Deployment maintain the desired number of application replicas?",
+    "expected_facts": [
+      "A Deployment declares the desired number of replicas",
+      "A Deployment manages Pods through ReplicaSets",
+      "Kubernetes creates or updates Pods to match the desired replica count"
+    ],
+    "expected_sources": [
+      {
+        "source": "kubernetes.md",
+        "chunk_index": 1
+      }
+    ],
+    "answerability": "answerable",
+    "generated_answer": "A Deployment is a declarative controller. In its spec you declare the **desired replica count** (e.g., `spec.replicas: 3`). The Deployment creates a ReplicaSet that owns the Pods defined by the Deployment’s pod template. The control‑plane controller continuously compares the current number of Pods that match the selector with the number you declared.  \n\n* If there are **fewer** Pods than the desired count, the ReplicaSet (and thus the Deployment) creates new Pods until the target is reached.  \n* If there are **more** Pods than requested, it deletes the excess Pods.  \n\nBy constantly reconciling the actual state with the declared state, the Deployment “maintains” the exact number of running replicas you asked for, handling rollouts, rollbacks, and pod replacements automatically【Source 1】. This behavior is part of Kubernetes’ declarative model: you describe the desired state, and the controllers work to move the cluster toward that state【Source 2】. The example manifest shows the `replicas: 3` field that drives this process【Source 3】.",
+    "retrieved_results": [
+      {
+        "title": "Kubernetes Fundamentals",
+        "source": "kubernetes.md",
+        "chunk_index": 1,
+        "text": "of the control-plane components, while the user still configures workloads, access, networking, and resources.\n\n## Pods, Deployments, and ReplicaSets\n\nA Pod is the smallest deployable unit in Kubernetes. A Pod contains one or more closely related containers that share a network namespace and can share storage volumes. Containers inside the same Pod can communicate through `localhost`. Pods are disposable: a Pod may be replaced when a node fails, a rollout occurs, or a controller decides that replacement is needed. Applications should not rely on a Pod's IP address remaining stable.\n\nA Deployment manages a replicated application through ReplicaSets. It is commonly used for stateless services such as HTTP APIs. The Deployment declares the desired number of replicas and a Pod template. Kubernetes creates or updates Pods to match that declaration and supports rolling updates and rollbacks.\n\nExample Deployment:",
+        "score": 0.03278688524590164,
+        "retrieval_score": 0.03278688524590164,
+        "rerank_score": 5.176082611083984
+      },
+      {
+        "title": "Kubernetes Fundamentals",
+        "source": "kubernetes.md",
+        "chunk_index": 0,
+        "text": "# Kubernetes Fundamentals\n\n## What Kubernetes Does\n\nKubernetes is a platform for deploying and operating containerized applications across a cluster of machines. It provides a declarative API: instead of manually starting every container, an operator describes the desired state, and Kubernetes controllers work to move the actual state toward that desired state. Kubernetes does not build application images; images are typically built by a separate tool or CI pipeline and then referenced by workloads.\n\nA Kubernetes cluster contains a control plane and worker nodes. The control plane stores cluster state and makes scheduling and coordination decisions. Worker nodes run application workloads in Pods. In a managed Kubernetes service, the provider operates some or all of the control-plane components, while the user still configures workloads, access, networking, and resources.\n\n## Pods, Deployments, and ReplicaSets",
+        "score": 0.03200204813108039,
+        "retrieval_score": 0.03200204813108039,
+        "rerank_score": 3.8999783992767334
+      },
+      {
+        "title": "Kubernetes Fundamentals",
+        "source": "kubernetes.md",
+        "chunk_index": 2,
+        "text": "icas and a Pod template. Kubernetes creates or updates Pods to match that declaration and supports rolling updates and rollbacks.\n\nExample Deployment:\n\n```yaml\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: api\nspec:\n  replicas: 3\n  selector:\n    matchLabels:\n      app: api\n  template:\n    metadata:\n      labels:\n        app: api\n    spec:\n      containers:\n        - name: api\n          image: example/api:1.0.0\n          ports:\n            - containerPort: 8000\n          resources:\n            requests:\n              cpu: \"100m\"\n              memory: \"128Mi\"\n            limits:\n              cpu: \"500m\"\n              memory: \"256Mi\"\n```\n\nThe Deployment selector must match the labels on its Pod template. Resource requests describe the resources Kubernetes uses for scheduling. Limits constrain resource use, with CPU throttling and memory termination behavior depending on the resource and runtime. Values should be based on observation and load testing rather than copied blindly.",
+        "score": 0.03200204813108039,
+        "retrieval_score": 0.03200204813108039,
+        "rerank_score": 1.5307430028915405
+      },
+      {
+        "title": "Kubernetes Fundamentals",
+        "source": "kubernetes.md",
+        "chunk_index": 8,
+        "text": "raints, configuration, and Service endpoints rather than assuming the application code is the only possible cause.\n\n## Common Troubleshooting Patterns\n\n`ImagePullBackOff` means Kubernetes is having trouble pulling an image; inspect the image reference, registry availability, and pull credentials. `CrashLoopBackOff` means a container repeatedly exits and Kubernetes is backing off before restarting it; examine current and previous logs, startup configuration, and probes. A Pod in `Pending` may be unschedulable because of resource requests, node selectors, taints, or storage constraints. A Service that cannot reach its backends often has a selector-label mismatch, incorrect target port, or an application that is not listening on the expected interface and port.\n\n## Security and Operational Practices",
+        "score": 0.029857397504456328,
+        "retrieval_score": 0.029857397504456328,
+        "rerank_score": -3.3405771255493164
+      },
+      {
+        "title": "Kubernetes Fundamentals",
+        "source": "kubernetes.md",
+        "chunk_index": 5,
+        "text": "at rest should be configured where appropriate. Avoid hard-coding passwords, API keys, or database connection strings into images or public manifests.\n\nConfiguration may be exposed to a container through environment variables or mounted files. When configuration changes, whether an application sees the update immediately depends on how it is consumed and whether the process reloads it. Some changes require a Pod restart or rollout.\n\n## Health Checks\n\nA readiness probe answers whether a container is ready to receive traffic. A liveness probe helps Kubernetes decide whether a container is stuck and should be restarted. A startup probe gives a slow-starting application extra time before liveness or readiness checks take effect. These probes have different purposes and should not all point blindly at the same endpoint.",
+        "score": 0.030776515151515152,
+        "retrieval_score": 0.030776515151515152,
+        "rerank_score": -4.047700881958008
+      }
+    ],
+    "extracted_citations": [
+      {
+        "title": "Kubernetes Fundamentals",
+        "source": "kubernetes.md",
+        "chunk_index": 1,
+        "text": "of the control-plane components, while the user still configures workloads, access, networking, and resources.\n\n## Pods, Deployments, and ReplicaSets\n\nA Pod is the smallest deployable unit in Kubernetes. A Pod contains one or more closely related containers that share a network namespace and can share storage volumes. Containers inside the same Pod can communicate through `localhost`. Pods are disposable: a Pod may be replaced when a node fails, a rollout occurs, or a controller decides that replacement is needed. Applications should not rely on a Pod's IP address remaining stable.\n\nA Deployment manages a replicated application through ReplicaSets. It is commonly used for stateless services such as HTTP APIs. The Deployment declares the desired number of replicas and a Pod template. Kubernetes creates or updates Pods to match that declaration and supports rolling updates and rollbacks.\n\nExample Deployment:"
+      },
+      {
+        "title": "Kubernetes Fundamentals",
+        "source": "kubernetes.md",
+        "chunk_index": 0,
+        "text": "# Kubernetes Fundamentals\n\n## What Kubernetes Does\n\nKubernetes is a platform for deploying and operating containerized applications across a cluster of machines. It provides a declarative API: instead of manually starting every container, an operator describes the desired state, and Kubernetes controllers work to move the actual state toward that desired state. Kubernetes does not build application images; images are typically built by a separate tool or CI pipeline and then referenced by workloads.\n\nA Kubernetes cluster contains a control plane and worker nodes. The control plane stores cluster state and makes scheduling and coordination decisions. Worker nodes run application workloads in Pods. In a managed Kubernetes service, the provider operates some or all of the control-plane components, while the user still configures workloads, access, networking, and resources.\n\n## Pods, Deployments, and ReplicaSets"
+      },
+      {
+        "title": "Kubernetes Fundamentals",
+        "source": "kubernetes.md",
+        "chunk_index": 2,
+        "text": "icas and a Pod template. Kubernetes creates or updates Pods to match that declaration and supports rolling updates and rollbacks.\n\nExample Deployment:\n\n```yaml\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: api\nspec:\n  replicas: 3\n  selector:\n    matchLabels:\n      app: api\n  template:\n    metadata:\n      labels:\n        app: api\n    spec:\n      containers:\n        - name: api\n          image: example/api:1.0.0\n          ports:\n            - containerPort: 8000\n          resources:\n            requests:\n              cpu: \"100m\"\n              memory: \"128Mi\"\n            limits:\n              cpu: \"500m\"\n              memory: \"256Mi\"\n```\n\nThe Deployment selector must match the labels on its Pod template. Resource requests describe the resources Kubernetes uses for scheduling. Limits constrain resource use, with CPU throttling and memory termination behavior depending on the resource and runtime. Values should be based on observation and load testing rather than copied blindly."
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "question": "How do containers inside the same Kubernetes Pod communicate?",
+    "expected_facts": [
+      "Containers inside the same Pod share a network namespace",
+      "Containers inside the same Pod can communicate through localhost"
+    ],
+    "expected_sources": [
+      {
+        "source": "kubernetes.md",
+        "chunk_index": 1
+      }
+    ],
+    "answerability": "answerable",
+    "generated_answer": "Containers that are part of the same Pod share a single network namespace. Because of this they can reach each other directly via the loop‑back interface—i.e., they communicate over **`localhost`** using whatever ports they expose. This intra‑Pod networking lets the containers talk to one another without needing any external Service or IP address.  \n\n**Source:** [Source 1]",
+    "retrieved_results": [
+      {
+        "title": "Kubernetes Fundamentals",
+        "source": "kubernetes.md",
+        "chunk_index": 1,
+        "text": "of the control-plane components, while the user still configures workloads, access, networking, and resources.\n\n## Pods, Deployments, and ReplicaSets\n\nA Pod is the smallest deployable unit in Kubernetes. A Pod contains one or more closely related containers that share a network namespace and can share storage volumes. Containers inside the same Pod can communicate through `localhost`. Pods are disposable: a Pod may be replaced when a node fails, a rollout occurs, or a controller decides that replacement is needed. Applications should not rely on a Pod's IP address remaining stable.\n\nA Deployment manages a replicated application through ReplicaSets. It is commonly used for stateless services such as HTTP APIs. The Deployment declares the desired number of replicas and a Pod template. Kubernetes creates or updates Pods to match that declaration and supports rolling updates and rollbacks.\n\nExample Deployment:",
+        "score": 0.03278688524590164,
+        "retrieval_score": 0.03278688524590164,
+        "rerank_score": 7.387151718139648
+      },
+      {
+        "title": "Kubernetes Fundamentals",
+        "source": "kubernetes.md",
+        "chunk_index": 0,
+        "text": "# Kubernetes Fundamentals\n\n## What Kubernetes Does\n\nKubernetes is a platform for deploying and operating containerized applications across a cluster of machines. It provides a declarative API: instead of manually starting every container, an operator describes the desired state, and Kubernetes controllers work to move the actual state toward that desired state. Kubernetes does not build application images; images are typically built by a separate tool or CI pipeline and then referenced by workloads.\n\nA Kubernetes cluster contains a control plane and worker nodes. The control plane stores cluster state and makes scheduling and coordination decisions. Worker nodes run application workloads in Pods. In a managed Kubernetes service, the provider operates some or all of the control-plane components, while the user still configures workloads, access, networking, and resources.\n\n## Pods, Deployments, and ReplicaSets",
+        "score": 0.031054405392392875,
+        "retrieval_score": 0.031054405392392875,
+        "rerank_score": 1.8070099353790283
+      },
+      {
+        "title": "Kubernetes Fundamentals",
+        "source": "kubernetes.md",
+        "chunk_index": 2,
+        "text": "icas and a Pod template. Kubernetes creates or updates Pods to match that declaration and supports rolling updates and rollbacks.\n\nExample Deployment:\n\n```yaml\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: api\nspec:\n  replicas: 3\n  selector:\n    matchLabels:\n      app: api\n  template:\n    metadata:\n      labels:\n        app: api\n    spec:\n      containers:\n        - name: api\n          image: example/api:1.0.0\n          ports:\n            - containerPort: 8000\n          resources:\n            requests:\n              cpu: \"100m\"\n              memory: \"128Mi\"\n            limits:\n              cpu: \"500m\"\n              memory: \"256Mi\"\n```\n\nThe Deployment selector must match the labels on its Pod template. Resource requests describe the resources Kubernetes uses for scheduling. Limits constrain resource use, with CPU throttling and memory termination behavior depending on the resource and runtime. Values should be based on observation and load testing rather than copied blindly.",
+        "score": 0.031746031746031744,
+        "retrieval_score": 0.031746031746031744,
+        "rerank_score": 1.4536104202270508
+      },
+      {
+        "title": "Kubernetes Fundamentals",
+        "source": "kubernetes.md",
+        "chunk_index": 5,
+        "text": "at rest should be configured where appropriate. Avoid hard-coding passwords, API keys, or database connection strings into images or public manifests.\n\nConfiguration may be exposed to a container through environment variables or mounted files. When configuration changes, whether an application sees the update immediately depends on how it is consumed and whether the process reloads it. Some changes require a Pod restart or rollout.\n\n## Health Checks\n\nA readiness probe answers whether a container is ready to receive traffic. A liveness probe helps Kubernetes decide whether a container is stuck and should be restarted. A startup probe gives a slow-starting application extra time before liveness or readiness checks take effect. These probes have different purposes and should not all point blindly at the same endpoint.",
+        "score": 0.03128054740957967,
+        "retrieval_score": 0.03128054740957967,
+        "rerank_score": -0.13325127959251404
+      },
+      {
+        "title": "Kubernetes Fundamentals",
+        "source": "kubernetes.md",
+        "chunk_index": 8,
+        "text": "raints, configuration, and Service endpoints rather than assuming the application code is the only possible cause.\n\n## Common Troubleshooting Patterns\n\n`ImagePullBackOff` means Kubernetes is having trouble pulling an image; inspect the image reference, registry availability, and pull credentials. `CrashLoopBackOff` means a container repeatedly exits and Kubernetes is backing off before restarting it; examine current and previous logs, startup configuration, and probes. A Pod in `Pending` may be unschedulable because of resource requests, node selectors, taints, or storage constraints. A Service that cannot reach its backends often has a selector-label mismatch, incorrect target port, or an application that is not listening on the expected interface and port.\n\n## Security and Operational Practices",
+        "score": 0.02964426877470356,
+        "retrieval_score": 0.02964426877470356,
+        "rerank_score": -1.1736557483673096
+      }
+    ],
+    "extracted_citations": [
+      {
+        "title": "Kubernetes Fundamentals",
+        "source": "kubernetes.md",
+        "chunk_index": 1,
+        "text": "of the control-plane components, while the user still configures workloads, access, networking, and resources.\n\n## Pods, Deployments, and ReplicaSets\n\nA Pod is the smallest deployable unit in Kubernetes. A Pod contains one or more closely related containers that share a network namespace and can share storage volumes. Containers inside the same Pod can communicate through `localhost`. Pods are disposable: a Pod may be replaced when a node fails, a rollout occurs, or a controller decides that replacement is needed. Applications should not rely on a Pod's IP address remaining stable.\n\nA Deployment manages a replicated application through ReplicaSets. It is commonly used for stateless services such as HTTP APIs. The Deployment declares the desired number of replicas and a Pod template. Kubernetes creates or updates Pods to match that declaration and supports rolling updates and rollbacks.\n\nExample Deployment:"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "question": "What does a LEFT JOIN return when there is no matching row in the right table?",
+    "expected_facts": [
+      "A LEFT JOIN preserves every row from the left table",
+      "Rows without a matching right-side record are still included"
+    ],
+    "expected_sources": [
+      {
+        "source": "postgresql.md",
+        "chunk_index": 4
+      }
+    ],
+    "answerability": "answerable",
+    "generated_answer": "A **LEFT JOIN** always keeps every row from the left‑hand table. If a particular left‑hand row has no matching row in the right‑hand table, the result still includes that left‑hand row, and the columns that come from the right table are filled with **NULL** values (so any aggregate like `COUNT(t.id)` will be zero).【Source 1】",
+    "retrieved_results": [
+      {
+        "title": "PostgreSQL Fundamentals",
+        "source": "postgresql.md",
+        "chunk_index": 4,
+        "text": "ble. Review destructive statements carefully and use a transaction when a sequence of changes must succeed or fail together.\n\n## Joins and Aggregation\n\nA join combines rows using a relationship between tables. An `INNER JOIN` returns rows with matching records on both sides. A `LEFT JOIN` preserves every row from the left side, even when there is no matching row on the right. Aggregate functions such as `COUNT`, `SUM`, `AVG`, `MIN`, and `MAX` summarize groups of rows.\n\n```sql\nSELECT p.name, COUNT(t.id) AS task_count\nFROM projects AS p\nLEFT JOIN tasks AS t ON t.project_id = p.id\nGROUP BY p.id, p.name\nORDER BY task_count DESC;\n```\n\nThis query includes projects with no tasks because it uses a left join. `COUNT(t.id)` returns zero for a project with no matching task rows; counting all rows after an outer join can produce a different result.\n\n## Transactions and ACID",
+        "score": 0.03278688524590164,
+        "retrieval_score": 0.03278688524590164,
+        "rerank_score": 7.098140716552734
+      },
+      {
+        "title": "PostgreSQL Fundamentals",
+        "source": "postgresql.md",
+        "chunk_index": 5,
+        "text": "returns zero for a project with no matching task rows; counting all rows after an outer join can produce a different result.\n\n## Transactions and ACID\n\nA transaction groups database operations into one logical unit. PostgreSQL transactions support the ACID properties: atomicity, consistency, isolation, and durability. `BEGIN` starts an explicit transaction, `COMMIT` makes its changes permanent, and `ROLLBACK` discards uncommitted changes.\n\n```sql\nBEGIN;\nUPDATE accounts SET balance = balance - 100 WHERE id = 1;\nUPDATE accounts SET balance = balance + 100 WHERE id = 2;\nCOMMIT;\n```\n\nThe example illustrates a transfer that should update both accounts together. A production implementation must also validate that the source account exists and has sufficient funds, handle concurrent updates safely, and verify that each update affected the expected number of rows. If an error occurs before commit, the transaction can be rolled back.",
+        "score": 0.03225806451612903,
+        "retrieval_score": 0.03225806451612903,
+        "rerank_score": 0.009064022451639175
+      },
+      {
+        "title": "PostgreSQL Fundamentals",
+        "source": "postgresql.md",
+        "chunk_index": 6,
+        "text": "pdates safely, and verify that each update affected the expected number of rows. If an error occurs before commit, the transaction can be rolled back.\n\nPostgreSQL uses multiversion concurrency control (MVCC) so concurrent transactions can work with consistent versions of rows. Isolation levels control which concurrent changes a transaction can observe. Applications should be prepared to retry certain transactions when concurrency conflicts or serialization failures occur.\n\n## Indexes and Query Performance\n\nAn index can speed up lookups and joins by helping PostgreSQL find matching rows without scanning the entire table. Indexes also consume storage and add work to inserts, updates, and deletes, so adding an index to every column is not a good strategy. B-tree is the default index type and supports many equality and range queries. Other index types, such as GIN, are useful for particular data types and operators.",
+        "score": 0.028790389395194696,
+        "retrieval_score": 0.028790389395194696,
+        "rerank_score": -6.045835971832275
+      },
+      {
+        "title": "PostgreSQL Fundamentals",
+        "source": "postgresql.md",
+        "chunk_index": 3,
+        "text": "xplicit value. Defaults are not substitutes for constraints: `NOT NULL` still matters when a column must always contain a value.\n\n## Basic SQL Queries\n\nUse `SELECT` to read rows, `INSERT` to add rows, `UPDATE` to modify rows, and `DELETE` to remove rows. A `WHERE` clause restricts which rows an operation affects. An `ORDER BY` clause controls the returned order, and `LIMIT` caps the number of rows returned.\n\n```sql\nSELECT id, title, created_at\nFROM tasks\nWHERE project_id = 1 AND completed = FALSE\nORDER BY created_at DESC\nLIMIT 20;\n\nINSERT INTO tasks (project_id, title)\nVALUES (1, 'Add API tests')\nRETURNING id, title;\n\nUPDATE tasks\nSET completed = TRUE\nWHERE id = 42\nRETURNING id, completed;\n```\n\nAn `UPDATE` or `DELETE` statement without an appropriate `WHERE` clause may affect every row in a table. Review destructive statements carefully and use a transaction when a sequence of changes must succeed or fail together.\n\n## Joins and Aggregation",
+        "score": 0.029138513513513514,
+        "retrieval_score": 0.029138513513513514,
+        "rerank_score": -8.577415466308594
+      },
+      {
+        "title": "PostgreSQL Fundamentals",
+        "source": "postgresql.md",
+        "chunk_index": 1,
+        "text": ", testing, and production environments should use separate credentials and appropriately scoped permissions.\n\n## Tables, Primary Keys, and Constraints\n\nA table represents rows of related data. Each column has a data type, such as `integer`, `text`, `boolean`, `date`, `timestamp with time zone`, or `uuid`. A primary key uniquely identifies each row. A foreign key enforces a relationship to a key in another table or in the same table. `NOT NULL`, `UNIQUE`, and `CHECK` constraints encode data rules in the database rather than relying solely on application code.\n\nExample schema:\n\n```sql\nCREATE TABLE projects (\n    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n    name TEXT NOT NULL UNIQUE,\n    created_at TIMESTAMPTZ NOT NULL DEFAULT now()\n);",
+        "score": 0.030309988518943745,
+        "retrieval_score": 0.030309988518943745,
+        "rerank_score": -9.125128746032715
+      }
+    ],
+    "extracted_citations": [
+      {
+        "title": "PostgreSQL Fundamentals",
+        "source": "postgresql.md",
+        "chunk_index": 4,
+        "text": "ble. Review destructive statements carefully and use a transaction when a sequence of changes must succeed or fail together.\n\n## Joins and Aggregation\n\nA join combines rows using a relationship between tables. An `INNER JOIN` returns rows with matching records on both sides. A `LEFT JOIN` preserves every row from the left side, even when there is no matching row on the right. Aggregate functions such as `COUNT`, `SUM`, `AVG`, `MIN`, and `MAX` summarize groups of rows.\n\n```sql\nSELECT p.name, COUNT(t.id) AS task_count\nFROM projects AS p\nLEFT JOIN tasks AS t ON t.project_id = p.id\nGROUP BY p.id, p.name\nORDER BY task_count DESC;\n```\n\nThis query includes projects with no tasks because it uses a left join. `COUNT(t.id)` returns zero for a project with no matching task rows; counting all rows after an outer join can produce a different result.\n\n## Transactions and ACID"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "question": "What are the ACID properties of PostgreSQL transactions?",
+    "expected_facts": [
+      "Atomicity",
+      "Consistency",
+      "Isolation",
+      "Durability"
+    ],
+    "expected_sources": [
+      {
+        "source": "postgresql.md",
+        "chunk_index": 5
+      }
+    ],
+    "answerability": "answerable",
+    "generated_answer": "PostgreSQL transactions are designed to satisfy the four ACID guarantees:\n\n* **Atomicity** – a transaction’s changes are treated as a single unit; they are either all applied or none are.  \n* **Consistency** – the database moves from one valid state to another, preserving all defined constraints.  \n* **Isolation** – concurrent transactions are kept separate so that each sees a consistent view of the data (PostgreSQL uses MVCC and configurable isolation levels).  \n* **Durability** – once a transaction is committed, its effects are permanently recorded and survive system failures.\n\nThese four properties are explicitly supported by PostgreSQL’s transaction system【Source 1】.",
+    "retrieved_results": [
+      {
+        "title": "PostgreSQL Fundamentals",
+        "source": "postgresql.md",
+        "chunk_index": 5,
+        "text": "returns zero for a project with no matching task rows; counting all rows after an outer join can produce a different result.\n\n## Transactions and ACID\n\nA transaction groups database operations into one logical unit. PostgreSQL transactions support the ACID properties: atomicity, consistency, isolation, and durability. `BEGIN` starts an explicit transaction, `COMMIT` makes its changes permanent, and `ROLLBACK` discards uncommitted changes.\n\n```sql\nBEGIN;\nUPDATE accounts SET balance = balance - 100 WHERE id = 1;\nUPDATE accounts SET balance = balance + 100 WHERE id = 2;\nCOMMIT;\n```\n\nThe example illustrates a transfer that should update both accounts together. A production implementation must also validate that the source account exists and has sufficient funds, handle concurrent updates safely, and verify that each update affected the expected number of rows. If an error occurs before commit, the transaction can be rolled back.",
+        "score": 0.03278688524590164,
+        "retrieval_score": 0.03278688524590164,
+        "rerank_score": 7.470588684082031
+      },
+      {
+        "title": "PostgreSQL Fundamentals",
+        "source": "postgresql.md",
+        "chunk_index": 0,
+        "text": "# PostgreSQL Fundamentals\n\n## What PostgreSQL Is\n\nPostgreSQL is an open-source relational database management system. It stores data in tables with defined schemas and supports SQL for querying and modifying records. PostgreSQL provides transactions, constraints, indexes, views, joins, and concurrency control. It is frequently used as the persistent data store behind web APIs and other application services.\n\nA database server can host multiple databases, and each database can contain schemas and database objects such as tables, views, sequences, and functions. A role represents a database identity and can be granted permissions. In application deployments, development, testing, and production environments should use separate credentials and appropriately scoped permissions.\n\n## Tables, Primary Keys, and Constraints",
+        "score": 0.03225806451612903,
+        "retrieval_score": 0.03225806451612903,
+        "rerank_score": 0.6967798471450806
+      },
+      {
+        "title": "PostgreSQL Fundamentals",
+        "source": "postgresql.md",
+        "chunk_index": 6,
+        "text": "pdates safely, and verify that each update affected the expected number of rows. If an error occurs before commit, the transaction can be rolled back.\n\nPostgreSQL uses multiversion concurrency control (MVCC) so concurrent transactions can work with consistent versions of rows. Isolation levels control which concurrent changes a transaction can observe. Applications should be prepared to retry certain transactions when concurrency conflicts or serialization failures occur.\n\n## Indexes and Query Performance\n\nAn index can speed up lookups and joins by helping PostgreSQL find matching rows without scanning the entire table. Indexes also consume storage and add work to inserts, updates, and deletes, so adding an index to every column is not a good strategy. B-tree is the default index type and supports many equality and range queries. Other index types, such as GIN, are useful for particular data types and operators.",
+        "score": 0.031746031746031744,
+        "retrieval_score": 0.031746031746031744,
+        "rerank_score": -1.5775651931762695
+      },
+      {
+        "title": "Python Fundamentals for Backend and Data Applications",
+        "source": "python.md",
+        "chunk_index": 4,
+        "text": "mutable, a dictionary maps keys to values, and a set stores unique elements. Choosing a suitable data structure improves both clarity and performance.\n\n```python\ndocuments = [\n    {\"id\": \"doc-1\", \"title\": \"Kubernetes Basics\", \"text\": \"A Pod is a deployable unit.\"},\n    {\"id\": \"doc-2\", \"title\": \"PostgreSQL Basics\", \"text\": \"A transaction groups database operations.\"},\n]\n\nby_id = {document[\"id\"]: document for document in documents}\nprint(by_id[\"doc-1\"][\"title\"])\n```\n\nThe dictionary comprehension builds an index by document ID. A dictionary lookup is generally more appropriate than scanning a list repeatedly when many lookups by the same key are needed.\n\n## Reading Files Safely",
+        "score": 0.03007688828584351,
+        "retrieval_score": 0.03007688828584351,
+        "rerank_score": -6.808391571044922
+      },
+      {
+        "title": "PostgreSQL Fundamentals",
+        "source": "postgresql.md",
+        "chunk_index": 4,
+        "text": "ble. Review destructive statements carefully and use a transaction when a sequence of changes must succeed or fail together.\n\n## Joins and Aggregation\n\nA join combines rows using a relationship between tables. An `INNER JOIN` returns rows with matching records on both sides. A `LEFT JOIN` preserves every row from the left side, even when there is no matching row on the right. Aggregate functions such as `COUNT`, `SUM`, `AVG`, `MIN`, and `MAX` summarize groups of rows.\n\n```sql\nSELECT p.name, COUNT(t.id) AS task_count\nFROM projects AS p\nLEFT JOIN tasks AS t ON t.project_id = p.id\nGROUP BY p.id, p.name\nORDER BY task_count DESC;\n```\n\nThis query includes projects with no tasks because it uses a left join. `COUNT(t.id)` returns zero for a project with no matching task rows; counting all rows after an outer join can produce a different result.\n\n## Transactions and ACID",
+        "score": 0.031009615384615385,
+        "retrieval_score": 0.031009615384615385,
+        "rerank_score": -10.03724479675293
+      }
+    ],
+    "extracted_citations": [
+      {
+        "title": "PostgreSQL Fundamentals",
+        "source": "postgresql.md",
+        "chunk_index": 5,
+        "text": "returns zero for a project with no matching task rows; counting all rows after an outer join can produce a different result.\n\n## Transactions and ACID\n\nA transaction groups database operations into one logical unit. PostgreSQL transactions support the ACID properties: atomicity, consistency, isolation, and durability. `BEGIN` starts an explicit transaction, `COMMIT` makes its changes permanent, and `ROLLBACK` discards uncommitted changes.\n\n```sql\nBEGIN;\nUPDATE accounts SET balance = balance - 100 WHERE id = 1;\nUPDATE accounts SET balance = balance + 100 WHERE id = 2;\nCOMMIT;\n```\n\nThe example illustrates a transfer that should update both accounts together. A production implementation must also validate that the source account exists and has sufficient funds, handle concurrent updates safely, and verify that each update affected the expected number of rows. If an error occurs before commit, the transaction can be rolled back."
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "question": "How does PostgreSQL improve query performance, and what are the trade-offs of indexes?",
+    "expected_facts": [
+      "Indexes can speed up lookups and joins",
+      "Indexes consume storage",
+      "Indexes add overhead to inserts, updates, and deletes"
+    ],
+    "expected_sources": [
+      {
+        "source": "postgresql.md",
+        "chunk_index": 6
+      }
+    ],
+    "answerability": "answerable",
+    "generated_answer": "PostgreSQL can make a query run faster mainly by using **indexes** that let the planner locate the needed rows without scanning the whole table.  \n* An index (the default B‑tree) can accelerate simple look‑ups, range predicates and joins, because the engine can jump directly to the matching entries instead of reading every row [Source 1].  \n* More specialized index types such as GIN are available for particular data types and operators, and multicolumn indexes are most useful when the column order matches the query pattern [Source 5].  \n* The optimizer decides whether to use an index based on current table statistics, which should be kept up‑to‑date so the planner can choose the cheapest plan [Source 5].  \n* Tools like `EXPLAIN` and `EXPLAIN ANALYZE` let you inspect the planned and actual execution paths, helping you verify that an index is actually improving performance [Source 5].\n\n### Trade‑offs of adding indexes\n| Benefit | Cost |\n|---------|------|\n| Faster reads (look‑ups, range scans, joins) | Extra **storage** for the index structure [Source 1] |\n| Enables the planner to choose more efficient plans | **Write overhead**: every `INSERT`, `UPDATE`, or `DELETE` must also modify the index, making those operations slower [Source 1] |\n| Supports advanced query patterns (multicolumn, GIN, etc.) | Maintenance work: indexes need to be rebuilt or re‑analyzed when data distribution changes [Source 5] |\n| Improves query predictability when statistics are current | Over‑indexing (adding an index to every column) can degrade overall performance because of the cumulative write cost and storage consumption [Source 1] |\n\nIn short, PostgreSQL improves query performance by leveraging appropriate indexes and a cost‑based planner, but each index adds storage requirements and extra work for data‑modifying statements, so indexes should be added judiciously based on measured query plans.",
+    "retrieved_results": [
+      {
+        "title": "PostgreSQL Fundamentals",
+        "source": "postgresql.md",
+        "chunk_index": 6,
+        "text": "pdates safely, and verify that each update affected the expected number of rows. If an error occurs before commit, the transaction can be rolled back.\n\nPostgreSQL uses multiversion concurrency control (MVCC) so concurrent transactions can work with consistent versions of rows. Isolation levels control which concurrent changes a transaction can observe. Applications should be prepared to retry certain transactions when concurrency conflicts or serialization failures occur.\n\n## Indexes and Query Performance\n\nAn index can speed up lookups and joins by helping PostgreSQL find matching rows without scanning the entire table. Indexes also consume storage and add work to inserts, updates, and deletes, so adding an index to every column is not a good strategy. B-tree is the default index type and supports many equality and range queries. Other index types, such as GIN, are useful for particular data types and operators.",
+        "score": 0.03278688524590164,
+        "retrieval_score": 0.03278688524590164,
+        "rerank_score": 3.7914631366729736
+      },
+      {
+        "title": "PostgreSQL Fundamentals",
+        "source": "postgresql.md",
+        "chunk_index": 0,
+        "text": "# PostgreSQL Fundamentals\n\n## What PostgreSQL Is\n\nPostgreSQL is an open-source relational database management system. It stores data in tables with defined schemas and supports SQL for querying and modifying records. PostgreSQL provides transactions, constraints, indexes, views, joins, and concurrency control. It is frequently used as the persistent data store behind web APIs and other application services.\n\nA database server can host multiple databases, and each database can contain schemas and database objects such as tables, views, sequences, and functions. A role represents a database identity and can be granted permissions. In application deployments, development, testing, and production environments should use separate credentials and appropriately scoped permissions.\n\n## Tables, Primary Keys, and Constraints",
+        "score": 0.03200204813108039,
+        "retrieval_score": 0.03200204813108039,
+        "rerank_score": 1.4203325510025024
+      },
+      {
+        "title": "Python Fundamentals for Backend and Data Applications",
+        "source": "python.md",
+        "chunk_index": 4,
+        "text": "mutable, a dictionary maps keys to values, and a set stores unique elements. Choosing a suitable data structure improves both clarity and performance.\n\n```python\ndocuments = [\n    {\"id\": \"doc-1\", \"title\": \"Kubernetes Basics\", \"text\": \"A Pod is a deployable unit.\"},\n    {\"id\": \"doc-2\", \"title\": \"PostgreSQL Basics\", \"text\": \"A transaction groups database operations.\"},\n]\n\nby_id = {document[\"id\"]: document for document in documents}\nprint(by_id[\"doc-1\"][\"title\"])\n```\n\nThe dictionary comprehension builds an index by document ID. A dictionary lookup is generally more appropriate than scanning a list repeatedly when many lookups by the same key are needed.\n\n## Reading Files Safely",
+        "score": 0.029877369007803793,
+        "retrieval_score": 0.029877369007803793,
+        "rerank_score": -0.011498089879751205
+      },
+      {
+        "title": "PostgreSQL Fundamentals",
+        "source": "postgresql.md",
+        "chunk_index": 5,
+        "text": "returns zero for a project with no matching task rows; counting all rows after an outer join can produce a different result.\n\n## Transactions and ACID\n\nA transaction groups database operations into one logical unit. PostgreSQL transactions support the ACID properties: atomicity, consistency, isolation, and durability. `BEGIN` starts an explicit transaction, `COMMIT` makes its changes permanent, and `ROLLBACK` discards uncommitted changes.\n\n```sql\nBEGIN;\nUPDATE accounts SET balance = balance - 100 WHERE id = 1;\nUPDATE accounts SET balance = balance + 100 WHERE id = 2;\nCOMMIT;\n```\n\nThe example illustrates a transfer that should update both accounts together. A production implementation must also validate that the source account exists and has sufficient funds, handle concurrent updates safely, and verify that each update affected the expected number of rows. If an error occurs before commit, the transaction can be rolled back.",
+        "score": 0.027984344422700584,
+        "retrieval_score": 0.027984344422700584,
+        "rerank_score": -2.32546067237854
+      },
+      {
+        "title": "PostgreSQL Fundamentals",
+        "source": "postgresql.md",
+        "chunk_index": 7,
+        "text": "e default index type and supports many equality and range queries. Other index types, such as GIN, are useful for particular data types and operators.\n\n```sql\nCREATE INDEX idx_tasks_project_created\nON tasks (project_id, created_at DESC);\n```\n\nA multicolumn index is most effective when its column order matches useful query patterns. Use `EXPLAIN` to inspect a planned query and `EXPLAIN ANALYZE` to execute it and report actual timings and row counts. Analyze the query plan before adding indexes based only on intuition. Keep database statistics current so the planner can make informed choices.\n\n## Connecting from a Python API",
+        "score": 0.031754032258064516,
+        "retrieval_score": 0.031754032258064516,
+        "rerank_score": -6.445366859436035
+      }
+    ],
+    "extracted_citations": [
+      {
+        "title": "PostgreSQL Fundamentals",
+        "source": "postgresql.md",
+        "chunk_index": 6,
+        "text": "pdates safely, and verify that each update affected the expected number of rows. If an error occurs before commit, the transaction can be rolled back.\n\nPostgreSQL uses multiversion concurrency control (MVCC) so concurrent transactions can work with consistent versions of rows. Isolation levels control which concurrent changes a transaction can observe. Applications should be prepared to retry certain transactions when concurrency conflicts or serialization failures occur.\n\n## Indexes and Query Performance\n\nAn index can speed up lookups and joins by helping PostgreSQL find matching rows without scanning the entire table. Indexes also consume storage and add work to inserts, updates, and deletes, so adding an index to every column is not a good strategy. B-tree is the default index type and supports many equality and range queries. Other index types, such as GIN, are useful for particular data types and operators."
+      },
+      {
+        "title": "PostgreSQL Fundamentals",
+        "source": "postgresql.md",
+        "chunk_index": 7,
+        "text": "e default index type and supports many equality and range queries. Other index types, such as GIN, are useful for particular data types and operators.\n\n```sql\nCREATE INDEX idx_tasks_project_created\nON tasks (project_id, created_at DESC);\n```\n\nA multicolumn index is most effective when its column order matches useful query patterns. Use `EXPLAIN` to inspect a planned query and `EXPLAIN ANALYZE` to execute it and report actual timings and row counts. Analyze the query plan before adding indexes based only on intuition. Keep database statistics current so the planner can make informed choices.\n\n## Connecting from a Python API"
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "question": "What is the purpose of Python type hints, and do they validate runtime data automatically?",
+    "expected_facts": [
+      "Type hints describe expected inputs and outputs",
+      "They help editors, reviewers, and static-analysis tools",
+      "Type hints do not automatically validate arbitrary runtime data"
+    ],
+    "expected_sources": [
+      {
+        "source": "python.md",
+        "chunk_index": 0
+      }
+    ],
+    "answerability": "answerable",
+    "generated_answer": "Python’s type hints are a way to annotate functions, variables, and other objects with the kinds of values they are expected to hold. They serve primarily as documentation for developers and as input for editors, reviewers, and static‑analysis tools (e.g., linters, type‑checkers) so that the intended inputs and outputs of code can be understood and verified before the program runs.\n\nHowever, type hints are **not** a runtime validation mechanism. Python does not automatically check that values passed to a function match the hinted types. If you need to enforce that data conforms to a particular shape at runtime you must add explicit checks yourself or use a library (such as Pydantic) that performs validation — type hints alone won’t do it [Source 1].",
+    "retrieved_results": [
+      {
+        "title": "Python Fundamentals for Backend and Data Applications",
+        "source": "python.md",
+        "chunk_index": 0,
+        "text": "# Python Fundamentals for Backend and Data Applications\n\n## Python's Role in an Application\n\nPython is a general-purpose programming language used for automation, APIs, data processing, machine learning, and developer tools. A Python program is commonly organized into modules and packages. A module is usually a `.py` file, while a package groups related modules under a directory. Clear module boundaries make code easier to test, reuse, and maintain.\n\nPython uses dynamic typing, but variables still refer to objects with particular types. Type hints describe expected inputs and outputs and help editors, reviewers, and static-analysis tools understand a program. Type hints do not automatically validate arbitrary runtime data; validation requires explicit checks or a library designed for that purpose.\n\n```python\nfrom collections.abc import Sequence",
+        "score": 0.03278688524590164,
+        "retrieval_score": 0.03278688524590164,
+        "rerank_score": 7.184155464172363
+      },
+      {
+        "title": "Python Fundamentals for Backend and Data Applications",
+        "source": "python.md",
+        "chunk_index": 1,
+        "text": "te arbitrary runtime data; validation requires explicit checks or a library designed for that purpose.\n\n```python\nfrom collections.abc import Sequence\n\ndef average(values: Sequence[float]) -> float:\n    if not values:\n        raise ValueError(\"values must not be empty\")\n    return sum(values) / len(values)\n```\n\nThe annotation communicates that `average` expects a sequence of numbers and returns a float. The explicit empty-sequence check prevents division by zero and makes the failure understandable to callers.\n\n## Virtual Environments and Dependencies",
+        "score": 0.0315136476426799,
+        "retrieval_score": 0.0315136476426799,
+        "rerank_score": 0.29669880867004395
+      },
+      {
+        "title": "Python Fundamentals for Backend and Data Applications",
+        "source": "python.md",
+        "chunk_index": 9,
+        "text": "sen strategy is intended to preserve the complete source text, concatenating its chunks should reproduce the input exactly.\n\n## HTTP APIs with FastAPI\n\nFastAPI is a Python framework for building HTTP APIs. A route maps an HTTP method and path to a Python function. Pydantic models can validate and parse request data. Keep input validation, business logic, and persistence sufficiently separated that they can be tested independently.\n\n```python\nfrom fastapi import FastAPI\nfrom pydantic import BaseModel, Field\n\napp = FastAPI()\n\nclass SearchRequest(BaseModel):\n    query: str = Field(min_length=1, max_length=500)\n    limit: int = Field(default=5, ge=1, le=20)\n\n@app.post(\"/search\")\ndef search(request: SearchRequest) -> dict[str, object]:\n    return {\"query\": request.query, \"limit\": request.limit, \"results\": []}\n```",
+        "score": 0.030834914611005692,
+        "retrieval_score": 0.030834914611005692,
+        "rerank_score": -2.0759949684143066
+      },
+      {
+        "title": "PostgreSQL Fundamentals",
+        "source": "postgresql.md",
+        "chunk_index": 7,
+        "text": "e default index type and supports many equality and range queries. Other index types, such as GIN, are useful for particular data types and operators.\n\n```sql\nCREATE INDEX idx_tasks_project_created\nON tasks (project_id, created_at DESC);\n```\n\nA multicolumn index is most effective when its column order matches useful query patterns. Use `EXPLAIN` to inspect a planned query and `EXPLAIN ANALYZE` to execute it and report actual timings and row counts. Analyze the query plan before adding indexes based only on intuition. Keep database statistics current so the planner can make informed choices.\n\n## Connecting from a Python API",
+        "score": 0.02919863597612958,
+        "retrieval_score": 0.02919863597612958,
+        "rerank_score": -3.636653423309326
+      },
+      {
+        "title": "PostgreSQL Fundamentals",
+        "source": "postgresql.md",
+        "chunk_index": 8,
+        "text": "re adding indexes based only on intuition. Keep database statistics current so the planner can make informed choices.\n\n## Connecting from a Python API\n\nA service commonly reads database connection settings from environment variables rather than hard-coding credentials. A connection string may include the host, port, database name, username, and password; secrets should not be committed to source control. Connection pooling can reduce the overhead of repeatedly opening connections, especially in a request-driven API.\n\nAlways use parameterized queries when including user-supplied values. Do not build SQL by concatenating raw input into a query string, because doing so can create SQL injection vulnerabilities. Use a database driver's parameters or a reputable query builder or ORM. The parameter syntax differs between drivers, so follow the library's documentation.\n\n## Backups, Migrations, and Reliability",
+        "score": 0.027783137179239824,
+        "retrieval_score": 0.027783137179239824,
+        "rerank_score": -5.497803688049316
+      }
+    ],
+    "extracted_citations": [
+      {
+        "title": "Python Fundamentals for Backend and Data Applications",
+        "source": "python.md",
+        "chunk_index": 0,
+        "text": "# Python Fundamentals for Backend and Data Applications\n\n## Python's Role in an Application\n\nPython is a general-purpose programming language used for automation, APIs, data processing, machine learning, and developer tools. A Python program is commonly organized into modules and packages. A module is usually a `.py` file, while a package groups related modules under a directory. Clear module boundaries make code easier to test, reuse, and maintain.\n\nPython uses dynamic typing, but variables still refer to objects with particular types. Type hints describe expected inputs and outputs and help editors, reviewers, and static-analysis tools understand a program. Type hints do not automatically validate arbitrary runtime data; validation requires explicit checks or a library designed for that purpose.\n\n```python\nfrom collections.abc import Sequence"
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "question": "Why should Python projects use virtual environments?",
+    "expected_facts": [
+      "Virtual environments isolate project packages",
+      "They help avoid dependency conflicts",
+      "Dependencies should be recorded in a dependency file"
+    ],
+    "expected_sources": [
+      {
+        "source": "python.md",
+        "chunk_index": 2
+      }
+    ],
+    "answerability": "answerable",
+    "generated_answer": "Python projects should use virtual environments because they give each project its own isolated set of packages, separate from the system‑wide Python installation and from the packages used by any other project. This isolation prevents dependency conflicts—different projects can require different versions of the same library without stepping on each other’s toes.  \n\nHaving a dedicated environment also makes deployments reproducible: the project can record exact dependency versions (e.g., in `requirements.txt`) and install them into the same isolated interpreter each time, ensuring that the code runs with the same libraries it was developed and tested with.  \n\nIn short, virtual environments:\n\n* Keep a project’s installed packages separate from other projects and the system Python — avoiding version clashes.  \n* Support reproducible, documented installations by pairing the environment with a dependency file.  \n* Keep generated files (like the `.venv` directory) out of source control, reducing accidental pollution of the codebase.\n\nThese points are described in the reference material [Source 1] and reinforced by the practical commands listed in [Source 5].",
+    "retrieved_results": [
+      {
+        "title": "Python Fundamentals for Backend and Data Applications",
+        "source": "python.md",
+        "chunk_index": 2,
+        "text": "The explicit empty-sequence check prevents division by zero and makes the failure understandable to callers.\n\n## Virtual Environments and Dependencies\n\nA virtual environment isolates a project's installed Python packages from other projects and the system Python installation. This helps avoid dependency conflicts. Create one with `python -m venv .venv` and activate it using the command appropriate for your shell. Install dependencies with the environment's Python interpreter, for example `python -m pip install fastapi`, so the package installer corresponds to the interpreter being used.\n\nA project should record its direct dependencies in a dependency file such as `requirements.txt` or in the project's chosen packaging configuration. Reproducible deployments require deliberate dependency versions and a documented installation process. The `.venv` directory, local secrets, bytecode caches, and other generated files generally should not be committed to Git.\n\nUseful commands include:",
+        "score": 0.03278688524590164,
+        "retrieval_score": 0.03278688524590164,
+        "rerank_score": 6.31260871887207
+      },
+      {
+        "title": "Python Fundamentals for Backend and Data Applications",
+        "source": "python.md",
+        "chunk_index": 1,
+        "text": "te arbitrary runtime data; validation requires explicit checks or a library designed for that purpose.\n\n```python\nfrom collections.abc import Sequence\n\ndef average(values: Sequence[float]) -> float:\n    if not values:\n        raise ValueError(\"values must not be empty\")\n    return sum(values) / len(values)\n```\n\nThe annotation communicates that `average` expects a sequence of numbers and returns a float. The explicit empty-sequence check prevents division by zero and makes the failure understandable to callers.\n\n## Virtual Environments and Dependencies",
+        "score": 0.02946236559139785,
+        "retrieval_score": 0.02946236559139785,
+        "rerank_score": -3.3439598083496094
+      },
+      {
+        "title": "PostgreSQL Fundamentals",
+        "source": "postgresql.md",
+        "chunk_index": 8,
+        "text": "re adding indexes based only on intuition. Keep database statistics current so the planner can make informed choices.\n\n## Connecting from a Python API\n\nA service commonly reads database connection settings from environment variables rather than hard-coding credentials. A connection string may include the host, port, database name, username, and password; secrets should not be committed to source control. Connection pooling can reduce the overhead of repeatedly opening connections, especially in a request-driven API.\n\nAlways use parameterized queries when including user-supplied values. Do not build SQL by concatenating raw input into a query string, because doing so can create SQL injection vulnerabilities. Use a database driver's parameters or a reputable query builder or ORM. The parameter syntax differs between drivers, so follow the library's documentation.\n\n## Backups, Migrations, and Reliability",
+        "score": 0.02819138376017471,
+        "retrieval_score": 0.02819138376017471,
+        "rerank_score": -3.605642318725586
+      },
+      {
+        "title": "Python Fundamentals for Backend and Data Applications",
+        "source": "python.md",
+        "chunk_index": 0,
+        "text": "# Python Fundamentals for Backend and Data Applications\n\n## Python's Role in an Application\n\nPython is a general-purpose programming language used for automation, APIs, data processing, machine learning, and developer tools. A Python program is commonly organized into modules and packages. A module is usually a `.py` file, while a package groups related modules under a directory. Clear module boundaries make code easier to test, reuse, and maintain.\n\nPython uses dynamic typing, but variables still refer to objects with particular types. Type hints describe expected inputs and outputs and help editors, reviewers, and static-analysis tools understand a program. Type hints do not automatically validate arbitrary runtime data; validation requires explicit checks or a library designed for that purpose.\n\n```python\nfrom collections.abc import Sequence",
+        "score": 0.03021353930031804,
+        "retrieval_score": 0.03021353930031804,
+        "rerank_score": -4.014845371246338
+      },
+      {
+        "title": "Python Fundamentals for Backend and Data Applications",
+        "source": "python.md",
+        "chunk_index": 3,
+        "text": ". The `.venv` directory, local secrets, bytecode caches, and other generated files generally should not be committed to Git.\n\nUseful commands include:\n\n```bash\npython --version\npython -m venv .venv\npython -m pip install -r requirements.txt\npython -m pip show fastapi\npython -m pip freeze\n```\n\n`python -m pip show` reports information about a package installed for the selected interpreter. If an editor reports that an import cannot be resolved, check which interpreter the editor uses before reinstalling packages. The terminal and editor can point to different environments.\n\n## Functions, Collections, and Data Structures\n\nFunctions package behavior into reusable units. Use descriptive names, keep functions focused, and return values instead of relying on unexpected global state. A list is ordered and mutable, a tuple is ordered and immutable, a dictionary maps keys to values, and a set stores unique elements. Choosing a suitable data structure improves both clarity and performance.",
+        "score": 0.030798389007344232,
+        "retrieval_score": 0.030798389007344232,
+        "rerank_score": -4.745209693908691
+      }
+    ],
+    "extracted_citations": [
+      {
+        "title": "Python Fundamentals for Backend and Data Applications",
+        "source": "python.md",
+        "chunk_index": 2,
+        "text": "The explicit empty-sequence check prevents division by zero and makes the failure understandable to callers.\n\n## Virtual Environments and Dependencies\n\nA virtual environment isolates a project's installed Python packages from other projects and the system Python installation. This helps avoid dependency conflicts. Create one with `python -m venv .venv` and activate it using the command appropriate for your shell. Install dependencies with the environment's Python interpreter, for example `python -m pip install fastapi`, so the package installer corresponds to the interpreter being used.\n\nA project should record its direct dependencies in a dependency file such as `requirements.txt` or in the project's chosen packaging configuration. Reproducible deployments require deliberate dependency versions and a documented installation process. The `.venv` directory, local secrets, bytecode caches, and other generated files generally should not be committed to Git.\n\nUseful commands include:"
+      },
+      {
+        "title": "Python Fundamentals for Backend and Data Applications",
+        "source": "python.md",
+        "chunk_index": 3,
+        "text": ". The `.venv` directory, local secrets, bytecode caches, and other generated files generally should not be committed to Git.\n\nUseful commands include:\n\n```bash\npython --version\npython -m venv .venv\npython -m pip install -r requirements.txt\npython -m pip show fastapi\npython -m pip freeze\n```\n\n`python -m pip show` reports information about a package installed for the selected interpreter. If an editor reports that an import cannot be resolved, check which interpreter the editor uses before reinstalling packages. The terminal and editor can point to different environments.\n\n## Functions, Collections, and Data Structures\n\nFunctions package behavior into reusable units. Use descriptive names, keep functions focused, and return values instead of relying on unexpected global state. A list is ordered and mutable, a tuple is ordered and immutable, a dictionary maps keys to values, and a set stores unique elements. Choosing a suitable data structure improves both clarity and performance."
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "question": "How does FastAPI validate incoming request data?",
+    "expected_facts": [
+      "Pydantic models validate and parse request data",
+      "Field constraints can enforce input requirements",
+      "A route maps an HTTP method and path to a Python function"
+    ],
+    "expected_sources": [
+      {
+        "source": "python.md",
+        "chunk_index": 9
+      }
+    ],
+    "answerability": "answerable",
+    "generated_answer": "FastAPI performs request‑body validation automatically by leveraging **Pydantic** models.  \nWhen a path operation function declares a parameter whose type is a subclass of `pydantic.BaseModel`, FastAPI:\n\n1. **Parses** the incoming JSON payload.  \n2. **Instantiates** the Pydantic model with that data.  \n3. **Runs** all of the model’s validation rules (type checks, field constraints such as `min_length`, `max_length`, `ge`, `le`, etc.).  \n4. If validation succeeds, the populated model instance is passed to the endpoint function; if it fails, FastAPI returns a clear error response before the function is executed.\n\nThe example in the documentation shows a `SearchRequest` model with field constraints, and FastAPI validates the request against those constraints automatically:\n\n```python\nclass SearchRequest(BaseModel):\n    query: str = Field(min_length=1, max_length=500)\n    limit: int = Field(default=5, ge=1, le=20)\n\n@app.post(\"/search\")\ndef search(request: SearchRequest):\n    ...\n```\n\nThus, FastAPI’s validation is driven by Pydantic’s model definitions, keeping input validation declarative and automatic. [Source 1]",
+    "retrieved_results": [
+      {
+        "title": "Python Fundamentals for Backend and Data Applications",
+        "source": "python.md",
+        "chunk_index": 9,
+        "text": "sen strategy is intended to preserve the complete source text, concatenating its chunks should reproduce the input exactly.\n\n## HTTP APIs with FastAPI\n\nFastAPI is a Python framework for building HTTP APIs. A route maps an HTTP method and path to a Python function. Pydantic models can validate and parse request data. Keep input validation, business logic, and persistence sufficiently separated that they can be tested independently.\n\n```python\nfrom fastapi import FastAPI\nfrom pydantic import BaseModel, Field\n\napp = FastAPI()\n\nclass SearchRequest(BaseModel):\n    query: str = Field(min_length=1, max_length=500)\n    limit: int = Field(default=5, ge=1, le=20)\n\n@app.post(\"/search\")\ndef search(request: SearchRequest) -> dict[str, object]:\n    return {\"query\": request.query, \"limit\": request.limit, \"results\": []}\n```",
+        "score": 0.03278688524590164,
+        "retrieval_score": 0.03278688524590164,
+        "rerank_score": 4.540369987487793
+      },
+      {
+        "title": "Python Fundamentals for Backend and Data Applications",
+        "source": "python.md",
+        "chunk_index": 10,
+        "text": "ost(\"/search\")\ndef search(request: SearchRequest) -> dict[str, object]:\n    return {\"query\": request.query, \"limit\": request.limit, \"results\": []}\n```\n\nThis is only a minimal endpoint skeleton; it validates the request but does not perform semantic retrieval. A search service would embed the query, request nearest vectors from a vector database, and serialize the matching document metadata and scores. An API should return predictable errors and avoid exposing internal stack traces or secrets to clients.\n\n## Logging and Configuration\n\nUse the `logging` module instead of sprinkling `print` calls throughout a long-running service. Include enough information to diagnose a problem, such as an operation name, request identifier, or document ID, while avoiding unnecessary personal data and secrets. Configure log levels by environment so development can be more verbose than production.",
+        "score": 0.031754032258064516,
+        "retrieval_score": 0.031754032258064516,
+        "rerank_score": -2.7135090827941895
+      },
+      {
+        "title": "Python Fundamentals for Backend and Data Applications",
+        "source": "python.md",
+        "chunk_index": 3,
+        "text": ". The `.venv` directory, local secrets, bytecode caches, and other generated files generally should not be committed to Git.\n\nUseful commands include:\n\n```bash\npython --version\npython -m venv .venv\npython -m pip install -r requirements.txt\npython -m pip show fastapi\npython -m pip freeze\n```\n\n`python -m pip show` reports information about a package installed for the selected interpreter. If an editor reports that an import cannot be resolved, check which interpreter the editor uses before reinstalling packages. The terminal and editor can point to different environments.\n\n## Functions, Collections, and Data Structures\n\nFunctions package behavior into reusable units. Use descriptive names, keep functions focused, and return values instead of relying on unexpected global state. A list is ordered and mutable, a tuple is ordered and immutable, a dictionary maps keys to values, and a set stores unique elements. Choosing a suitable data structure improves both clarity and performance.",
+        "score": 0.015384615384615385,
+        "retrieval_score": 0.015384615384615385,
+        "rerank_score": -6.735666275024414
+      },
+      {
+        "title": "Python Fundamentals for Backend and Data Applications",
+        "source": "python.md",
+        "chunk_index": 2,
+        "text": "The explicit empty-sequence check prevents division by zero and makes the failure understandable to callers.\n\n## Virtual Environments and Dependencies\n\nA virtual environment isolates a project's installed Python packages from other projects and the system Python installation. This helps avoid dependency conflicts. Create one with `python -m venv .venv` and activate it using the command appropriate for your shell. Install dependencies with the environment's Python interpreter, for example `python -m pip install fastapi`, so the package installer corresponds to the interpreter being used.\n\nA project should record its direct dependencies in a dependency file such as `requirements.txt` or in the project's chosen packaging configuration. Reproducible deployments require deliberate dependency versions and a documented installation process. The `.venv` directory, local secrets, bytecode caches, and other generated files generally should not be committed to Git.\n\nUseful commands include:",
+        "score": 0.014492753623188406,
+        "retrieval_score": 0.014492753623188406,
+        "rerank_score": -7.446385383605957
+      },
+      {
+        "title": "Python Fundamentals for Backend and Data Applications",
+        "source": "python.md",
+        "chunk_index": 12,
+        "text": "ld be validated at startup when missing or malformed values would prevent the application from working correctly.\n\n## Practical Engineering Guidelines\n\nPrefer small functions with clear contracts, meaningful variable names, and explicit error handling. Separate I/O from pure transformation logic where possible. For an ingestion system, file reading and database writes are I/O, while normalization, chunk construction, and metadata validation can often be tested as deterministic transformations. Store source identifiers and chunk indices so retrieved passages can be traced back to their original documents. Add tests before making the pipeline more complex, and document setup commands so another developer can reproduce the project locally.",
+        "score": 0.014084507042253521,
+        "retrieval_score": 0.014084507042253521,
+        "rerank_score": -9.706191062927246
+      }
+    ],
+    "extracted_citations": [
+      {
+        "title": "Python Fundamentals for Backend and Data Applications",
+        "source": "python.md",
+        "chunk_index": 9,
+        "text": "sen strategy is intended to preserve the complete source text, concatenating its chunks should reproduce the input exactly.\n\n## HTTP APIs with FastAPI\n\nFastAPI is a Python framework for building HTTP APIs. A route maps an HTTP method and path to a Python function. Pydantic models can validate and parse request data. Keep input validation, business logic, and persistence sufficiently separated that they can be tested independently.\n\n```python\nfrom fastapi import FastAPI\nfrom pydantic import BaseModel, Field\n\napp = FastAPI()\n\nclass SearchRequest(BaseModel):\n    query: str = Field(min_length=1, max_length=500)\n    limit: int = Field(default=5, ge=1, le=20)\n\n@app.post(\"/search\")\ndef search(request: SearchRequest) -> dict[str, object]:\n    return {\"query\": request.query, \"limit\": request.limit, \"results\": []}\n```"
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "question": "How should a PostgreSQL application handle concurrent account transfers, including preventing overdrafts?",
+    "expected_facts": [
+      "Transactions group operations into one logical unit",
+      "Concurrent updates must be handled safely",
+      "The source account should have sufficient funds"
+    ],
+    "expected_sources": [
+      {
+        "source": "postgresql.md",
+        "chunk_index": 5
+      }
+    ],
+    "answerability": "partial",
+    "generated_answer": "A PostgreSQL‑based service should treat a money‑transfer as a single, atomic transaction and protect it against the race conditions that arise when many transfers are happening at the same time.  \nThe typical pattern is:\n\n1. **Start an explicit transaction** – `BEGIN;` (or the driver’s transaction API).  \n2. **Lock the source row** (and optionally the destination row) so that no other session can change the balance while the transfer is being evaluated. This is usually done with a `SELECT … FOR UPDATE` on the account rows.  \n3. **Validate the source account** – confirm that the row exists and that `balance >= amount`. If the check fails, abort the transaction (ROLLBACK) and return an “insufficient funds” error.  \n4. **Perform the two updates** in the same transaction:  \n   ```sql\n   UPDATE accounts SET balance = balance - :amount WHERE id = :src_id;\n   UPDATE accounts SET balance = balance + :amount WHERE id = :dst_id;\n   ```  \n   The example in the reference material shows exactly this kind of transfer logic【Source 2】.  \n5. **Verify the row‑count** for each `UPDATE` (e.g., `GET DIAGNOSTICS row_count = ROW_COUNT;`) to be sure the expected rows were actually modified.  \n6. **Commit** – `COMMIT;`. If any error occurs before the commit, the transaction can be rolled back, leaving both accounts unchanged【Source 2】.  \n\n### Dealing with concurrency\n\n* PostgreSQL’s MVCC guarantees that each transaction sees a consistent snapshot, but concurrent updates can still conflict. The documentation notes that *applications should be prepared to retry certain transactions when concurrency conflicts or serialization failures occur*【Source 1】.  \n* Using the highest isolation level (`SERIALIZABLE`) or explicitly locking the rows (`SELECT … FOR UPDATE`) prevents two transfers from simultaneously reading the same balance and both thinking there are sufficient funds.  \n* If a `serialization_failure` (SQLSTATE 40001) or a deadlock is detected, the application should catch the exception, roll back, and retry the whole transfer logic a limited number of times.\n\n### Summary\n\n- Wrap the debit and credit updates in a single transaction.  \n",
+    "retrieved_results": [
+      {
+        "title": "PostgreSQL Fundamentals",
+        "source": "postgresql.md",
+        "chunk_index": 6,
+        "text": "pdates safely, and verify that each update affected the expected number of rows. If an error occurs before commit, the transaction can be rolled back.\n\nPostgreSQL uses multiversion concurrency control (MVCC) so concurrent transactions can work with consistent versions of rows. Isolation levels control which concurrent changes a transaction can observe. Applications should be prepared to retry certain transactions when concurrency conflicts or serialization failures occur.\n\n## Indexes and Query Performance\n\nAn index can speed up lookups and joins by helping PostgreSQL find matching rows without scanning the entire table. Indexes also consume storage and add work to inserts, updates, and deletes, so adding an index to every column is not a good strategy. B-tree is the default index type and supports many equality and range queries. Other index types, such as GIN, are useful for particular data types and operators.",
+        "score": 0.03225806451612903,
+        "retrieval_score": 0.03225806451612903,
+        "rerank_score": 3.2115767002105713
+      },
+      {
+        "title": "PostgreSQL Fundamentals",
+        "source": "postgresql.md",
+        "chunk_index": 5,
+        "text": "returns zero for a project with no matching task rows; counting all rows after an outer join can produce a different result.\n\n## Transactions and ACID\n\nA transaction groups database operations into one logical unit. PostgreSQL transactions support the ACID properties: atomicity, consistency, isolation, and durability. `BEGIN` starts an explicit transaction, `COMMIT` makes its changes permanent, and `ROLLBACK` discards uncommitted changes.\n\n```sql\nBEGIN;\nUPDATE accounts SET balance = balance - 100 WHERE id = 1;\nUPDATE accounts SET balance = balance + 100 WHERE id = 2;\nCOMMIT;\n```\n\nThe example illustrates a transfer that should update both accounts together. A production implementation must also validate that the source account exists and has sufficient funds, handle concurrent updates safely, and verify that each update affected the expected number of rows. If an error occurs before commit, the transaction can be rolled back.",
+        "score": 0.03278688524590164,
+        "retrieval_score": 0.03278688524590164,
+        "rerank_score": 3.0579309463500977
+      },
+      {
+        "title": "PostgreSQL Fundamentals",
+        "source": "postgresql.md",
+        "chunk_index": 0,
+        "text": "# PostgreSQL Fundamentals\n\n## What PostgreSQL Is\n\nPostgreSQL is an open-source relational database management system. It stores data in tables with defined schemas and supports SQL for querying and modifying records. PostgreSQL provides transactions, constraints, indexes, views, joins, and concurrency control. It is frequently used as the persistent data store behind web APIs and other application services.\n\nA database server can host multiple databases, and each database can contain schemas and database objects such as tables, views, sequences, and functions. A role represents a database identity and can be granted permissions. In application deployments, development, testing, and production environments should use separate credentials and appropriately scoped permissions.\n\n## Tables, Primary Keys, and Constraints",
+        "score": 0.03149801587301587,
+        "retrieval_score": 0.03149801587301587,
+        "rerank_score": -0.7648425102233887
+      },
+      {
+        "title": "Python Fundamentals for Backend and Data Applications",
+        "source": "python.md",
+        "chunk_index": 4,
+        "text": "mutable, a dictionary maps keys to values, and a set stores unique elements. Choosing a suitable data structure improves both clarity and performance.\n\n```python\ndocuments = [\n    {\"id\": \"doc-1\", \"title\": \"Kubernetes Basics\", \"text\": \"A Pod is a deployable unit.\"},\n    {\"id\": \"doc-2\", \"title\": \"PostgreSQL Basics\", \"text\": \"A transaction groups database operations.\"},\n]\n\nby_id = {document[\"id\"]: document for document in documents}\nprint(by_id[\"doc-1\"][\"title\"])\n```\n\nThe dictionary comprehension builds an index by document ID. A dictionary lookup is generally more appropriate than scanning a list repeatedly when many lookups by the same key are needed.\n\n## Reading Files Safely",
+        "score": 0.028258706467661692,
+        "retrieval_score": 0.028258706467661692,
+        "rerank_score": -9.246589660644531
+      },
+      {
+        "title": "Kubernetes Fundamentals",
+        "source": "kubernetes.md",
+        "chunk_index": 6,
+        "text": "xtra time before liveness or readiness checks take effect. These probes have different purposes and should not all point blindly at the same endpoint.\n\nA readiness endpoint should reflect whether the instance can serve requests, including whether essential dependencies are available if that is part of the application's service contract. A liveness endpoint should avoid failing merely because a temporary dependency is unavailable; otherwise, the cluster can repeatedly restart healthy application processes during an external outage.\n\n## Useful kubectl Commands\n\n```bash\nkubectl get pods\nkubectl get deployments\nkubectl get services\nkubectl describe pod <pod-name>\nkubectl logs <pod-name>\nkubectl logs deployment/api\nkubectl get events --sort-by=.metadata.creationTimestamp\nkubectl apply -f deployment.yaml\nkubectl rollout status deployment/api\nkubectl rollout undo deployment/api\n```",
+        "score": 0.02854251012145749,
+        "retrieval_score": 0.02854251012145749,
+        "rerank_score": -9.923365592956543
+      }
+    ],
+    "extracted_citations": [
+      {
+        "title": "PostgreSQL Fundamentals",
+        "source": "postgresql.md",
+        "chunk_index": 6,
+        "text": "pdates safely, and verify that each update affected the expected number of rows. If an error occurs before commit, the transaction can be rolled back.\n\nPostgreSQL uses multiversion concurrency control (MVCC) so concurrent transactions can work with consistent versions of rows. Isolation levels control which concurrent changes a transaction can observe. Applications should be prepared to retry certain transactions when concurrency conflicts or serialization failures occur.\n\n## Indexes and Query Performance\n\nAn index can speed up lookups and joins by helping PostgreSQL find matching rows without scanning the entire table. Indexes also consume storage and add work to inserts, updates, and deletes, so adding an index to every column is not a good strategy. B-tree is the default index type and supports many equality and range queries. Other index types, such as GIN, are useful for particular data types and operators."
+      },
+      {
+        "title": "PostgreSQL Fundamentals",
+        "source": "postgresql.md",
+        "chunk_index": 5,
+        "text": "returns zero for a project with no matching task rows; counting all rows after an outer join can produce a different result.\n\n## Transactions and ACID\n\nA transaction groups database operations into one logical unit. PostgreSQL transactions support the ACID properties: atomicity, consistency, isolation, and durability. `BEGIN` starts an explicit transaction, `COMMIT` makes its changes permanent, and `ROLLBACK` discards uncommitted changes.\n\n```sql\nBEGIN;\nUPDATE accounts SET balance = balance - 100 WHERE id = 1;\nUPDATE accounts SET balance = balance + 100 WHERE id = 2;\nCOMMIT;\n```\n\nThe example illustrates a transfer that should update both accounts together. A production implementation must also validate that the source account exists and has sufficient funds, handle concurrent updates safely, and verify that each update affected the expected number of rows. If an error occurs before commit, the transaction can be rolled back."
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "question": "How does Kubernetes automatically autoscale Pods based on CPU utilization using the Horizontal Pod Autoscaler?",
+    "expected_facts": [],
+    "expected_sources": [],
+    "answerability": "unanswerable",
+    "generated_answer": "The provided excerpts discuss Pods, Deployments, and resource requests/limits, but they do not contain any information about the Horizontal Pod Autoscaler or how Kubernetes uses CPU utilization to automatically scale Pods. Therefore, I cannot answer the question based on the given context.",
+    "retrieved_results": [
+      {
+        "title": "Kubernetes Fundamentals",
+        "source": "kubernetes.md",
+        "chunk_index": 2,
+        "text": "icas and a Pod template. Kubernetes creates or updates Pods to match that declaration and supports rolling updates and rollbacks.\n\nExample Deployment:\n\n```yaml\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: api\nspec:\n  replicas: 3\n  selector:\n    matchLabels:\n      app: api\n  template:\n    metadata:\n      labels:\n        app: api\n    spec:\n      containers:\n        - name: api\n          image: example/api:1.0.0\n          ports:\n            - containerPort: 8000\n          resources:\n            requests:\n              cpu: \"100m\"\n              memory: \"128Mi\"\n            limits:\n              cpu: \"500m\"\n              memory: \"256Mi\"\n```\n\nThe Deployment selector must match the labels on its Pod template. Resource requests describe the resources Kubernetes uses for scheduling. Limits constrain resource use, with CPU throttling and memory termination behavior depending on the resource and runtime. Values should be based on observation and load testing rather than copied blindly.",
+        "score": 0.03278688524590164,
+        "retrieval_score": 0.03278688524590164,
+        "rerank_score": -0.7407869696617126
+      },
+      {
+        "title": "Kubernetes Fundamentals",
+        "source": "kubernetes.md",
+        "chunk_index": 1,
+        "text": "of the control-plane components, while the user still configures workloads, access, networking, and resources.\n\n## Pods, Deployments, and ReplicaSets\n\nA Pod is the smallest deployable unit in Kubernetes. A Pod contains one or more closely related containers that share a network namespace and can share storage volumes. Containers inside the same Pod can communicate through `localhost`. Pods are disposable: a Pod may be replaced when a node fails, a rollout occurs, or a controller decides that replacement is needed. Applications should not rely on a Pod's IP address remaining stable.\n\nA Deployment manages a replicated application through ReplicaSets. It is commonly used for stateless services such as HTTP APIs. The Deployment declares the desired number of replicas and a Pod template. Kubernetes creates or updates Pods to match that declaration and supports rolling updates and rollbacks.\n\nExample Deployment:",
+        "score": 0.03149801587301587,
+        "retrieval_score": 0.03149801587301587,
+        "rerank_score": -1.9930551052093506
+      },
+      {
+        "title": "Kubernetes Fundamentals",
+        "source": "kubernetes.md",
+        "chunk_index": 0,
+        "text": "# Kubernetes Fundamentals\n\n## What Kubernetes Does\n\nKubernetes is a platform for deploying and operating containerized applications across a cluster of machines. It provides a declarative API: instead of manually starting every container, an operator describes the desired state, and Kubernetes controllers work to move the actual state toward that desired state. Kubernetes does not build application images; images are typically built by a separate tool or CI pipeline and then referenced by workloads.\n\nA Kubernetes cluster contains a control plane and worker nodes. The control plane stores cluster state and makes scheduling and coordination decisions. Worker nodes run application workloads in Pods. In a managed Kubernetes service, the provider operates some or all of the control-plane components, while the user still configures workloads, access, networking, and resources.\n\n## Pods, Deployments, and ReplicaSets",
+        "score": 0.03200204813108039,
+        "retrieval_score": 0.03200204813108039,
+        "rerank_score": -2.0001845359802246
+      },
+      {
+        "title": "Kubernetes Fundamentals",
+        "source": "kubernetes.md",
+        "chunk_index": 8,
+        "text": "raints, configuration, and Service endpoints rather than assuming the application code is the only possible cause.\n\n## Common Troubleshooting Patterns\n\n`ImagePullBackOff` means Kubernetes is having trouble pulling an image; inspect the image reference, registry availability, and pull credentials. `CrashLoopBackOff` means a container repeatedly exits and Kubernetes is backing off before restarting it; examine current and previous logs, startup configuration, and probes. A Pod in `Pending` may be unschedulable because of resource requests, node selectors, taints, or storage constraints. A Service that cannot reach its backends often has a selector-label mismatch, incorrect target port, or an application that is not listening on the expected interface and port.\n\n## Security and Operational Practices",
+        "score": 0.03007688828584351,
+        "retrieval_score": 0.03007688828584351,
+        "rerank_score": -5.071646690368652
+      },
+      {
+        "title": "Kubernetes Fundamentals",
+        "source": "kubernetes.md",
+        "chunk_index": 5,
+        "text": "at rest should be configured where appropriate. Avoid hard-coding passwords, API keys, or database connection strings into images or public manifests.\n\nConfiguration may be exposed to a container through environment variables or mounted files. When configuration changes, whether an application sees the update immediately depends on how it is consumed and whether the process reloads it. Some changes require a Pod restart or rollout.\n\n## Health Checks\n\nA readiness probe answers whether a container is ready to receive traffic. A liveness probe helps Kubernetes decide whether a container is stuck and should be restarted. A startup probe gives a slow-starting application extra time before liveness or readiness checks take effect. These probes have different purposes and should not all point blindly at the same endpoint.",
+        "score": 0.030090497737556562,
+        "retrieval_score": 0.030090497737556562,
+        "rerank_score": -5.816624641418457
+      }
+    ],
+    "extracted_citations": []
+  }
+]

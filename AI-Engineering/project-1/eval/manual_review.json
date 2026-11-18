@@ -1,0 +1,27 @@
+
+[
+  {
+    "id": 1,
+    "faithfulness": 5,
+    "relevance": 5,
+    "citation_correctness": 4,
+    "abstention_correct": null,
+    "notes": "Main claims are supported by Kubernetes chunk 1. Worker-node detail is supported by chunk 0. Citation 1 adds limited value."
+  },
+  {
+    "id": 5,
+    "faithfulness": 4,
+    "relevance": 5,
+    "citation_correctness": 5,
+    "abstention_correct": null,
+    "notes": "All four ACID properties are cited correctly. Some definitions go beyond the explicit evidence in chunk 5. MVCC is discussed in chunk 6 but not cited."
+  },
+  {
+    "id": 11,
+    "faithfulness": 5,
+    "relevance": 5,
+    "citation_correctness": 5,
+    "abstention_correct": true,
+    "notes": "Correctly abstains because retrieved context does not explain Horizontal Pod Autoscaler or CPU-based autoscaling. No citations needed."
+  }
+]

@@ -4,7 +4,7 @@ def extract_citations(answer: str, results : list[dict]) -> list[dict]:
     cited_indices = {
         int(index)
         for index in re.findall(
-            r"[【\[]\s*Source\s+(\d+)\s*[】\]]",
+            r"(?:【|\[)\s*Source\s+(\d+)\s*(?:】|\])",
             answer,
         )
     }

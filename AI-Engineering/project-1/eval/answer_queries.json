@@ -1,0 +1,168 @@
+[
+    {
+    "id" : 1,
+    "question" : "What is a Kubernetes Pod?",
+    "expected_facts" : [
+        "A Pod is the smallest deployable unit in Kubernetes",
+        "A Pod can contain one or more containers"
+    ],
+    "expected_sources": [
+        {
+            "source":"kubernetes.md",
+            "chunk_index": 1
+        }
+    ],
+    "answerability" : "answerable"
+    },
+    {
+    "id": 2,
+    "question": "How does a Kubernetes Deployment maintain the desired number of application replicas?",
+    "expected_facts": [
+        "A Deployment declares the desired number of replicas",
+        "A Deployment manages Pods through ReplicaSets",
+        "Kubernetes creates or updates Pods to match the desired replica count"
+    ],
+    "expected_sources": [
+        {
+        "source": "kubernetes.md",
+        "chunk_index": 1
+        }
+    ],
+    "answerability": "answerable"
+    },
+    {
+    "id": 3,
+    "question": "How do containers inside the same Kubernetes Pod communicate?",
+    "expected_facts": [
+        "Containers inside the same Pod share a network namespace",
+        "Containers inside the same Pod can communicate through localhost"
+    ],
+    "expected_sources": [
+        {
+        "source": "kubernetes.md",
+        "chunk_index": 1
+        }
+    ],
+    "answerability": "answerable"
+    },
+    {
+    "id": 4,
+    "question": "What does a LEFT JOIN return when there is no matching row in the right table?",
+    "expected_facts": [
+        "A LEFT JOIN preserves every row from the left table",
+        "Rows without a matching right-side record are still included"
+    ],
+    "expected_sources": [
+        {
+        "source": "postgresql.md",
+        "chunk_index": 4
+        }
+    ],
+    "answerability": "answerable"
+    },
+    {
+    "id": 5,
+    "question": "What are the ACID properties of PostgreSQL transactions?",
+    "expected_facts": [
+        "Atomicity",
+        "Consistency",
+        "Isolation",
+        "Durability"
+    ],
+    "expected_sources": [
+        {
+        "source": "postgresql.md",
+        "chunk_index": 5
+        }
+    ],
+    "answerability": "answerable"
+    },
+    {
+    "id": 6,
+    "question": "How does PostgreSQL improve query performance, and what are the trade-offs of indexes?",
+    "expected_facts": [
+        "Indexes can speed up lookups and joins",
+        "Indexes consume storage",
+        "Indexes add overhead to inserts, updates, and deletes"
+    ],
+    "expected_sources": [
+        {
+        "source": "postgresql.md",
+        "chunk_index": 6
+        }
+    ],
+    "answerability": "answerable"
+    },
+    {
+    "id": 7,
+    "question": "What is the purpose of Python type hints, and do they validate runtime data automatically?",
+    "expected_facts": [
+        "Type hints describe expected inputs and outputs",
+        "They help editors, reviewers, and static-analysis tools",
+        "Type hints do not automatically validate arbitrary runtime data"
+    ],
+    "expected_sources": [
+        {
+        "source": "python.md",
+        "chunk_index": 0
+        }
+    ],
+    "answerability": "answerable"
+    },
+    {
+    "id": 8,
+    "question": "Why should Python projects use virtual environments?",
+    "expected_facts": [
+        "Virtual environments isolate project packages",
+        "They help avoid dependency conflicts",
+        "Dependencies should be recorded in a dependency file"
+    ],
+    "expected_sources": [
+        {
+        "source": "python.md",
+        "chunk_index": 2
+        }
+    ],
+    "answerability": "answerable"
+    },
+    {
+    "id": 9,
+    "question": "How does FastAPI validate incoming request data?",
+    "expected_facts": [
+        "Pydantic models validate and parse request data",
+        "Field constraints can enforce input requirements",
+        "A route maps an HTTP method and path to a Python function"
+    ],
+    "expected_sources": [
+        {
+        "source": "python.md",
+        "chunk_index": 9
+        }
+    ],
+    "answerability": "answerable"
+    },
+    {
+    "id": 10,
+    "question": "How should a PostgreSQL application handle concurrent account transfers, including preventing overdrafts?",
+    "expected_facts": [
+        "Transactions group operations into one logical unit",
+        "Concurrent updates must be handled safely",
+        "The source account should have sufficient funds"
+    ],
+    "expected_sources": [
+        {
+        "source": "postgresql.md",
+        "chunk_index": 5
+        }
+    ],
+    "answerability": "partial"
+    },
+    {
+    "id": 11,
+    "question": "How does Kubernetes automatically autoscale Pods based on CPU utilization using the Horizontal Pod Autoscaler?",
+    "expected_facts": [],
+    "expected_sources": [],
+    "answerability": "unanswerable"
+    }
+
+]

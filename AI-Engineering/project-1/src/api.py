@@ -33,11 +33,12 @@ app = FastAPI(
 class SearchRequest(BaseModel):
     query: str = Field(min_length=1, max_length=1000)
     limit: int = Field(default=5, ge=1, le=20)
+    source: str | None = None
 
 
 class SearchResult(BaseModel):
     title: str
-    source: str
+    source: str | None = Field(default=None, min_length=1)
     chunk_index: int | None
     text: str
     retrieval_score : float
@@ -83,6 +84,7 @@ def search_documents(
     results = searcher.search(
         query=body.query,
         limit=body.limit,
+        source=body.source,
     )
 
     return SearchResponse(
@@ -107,6 +109,7 @@ def ask_question(
     results = searcher.search(
         query=body.query,
         limit=body.limit,
+        source=body.source,
     )
 
     if not results:

@@ -7,6 +7,13 @@ from src.reranked_search import RerankedSearch
 from src.generation import generate_rag_answer
 from src.citations import extract_citations
 from src.logger import get_logger
+from groq import(
+    APIConnectionError,
+    APITimeoutError,
+    APIStatusError,
+    AuthenticationError,
+    RateLimitError,
+)
 
 logger = get_logger(__name__)
 
@@ -123,9 +130,36 @@ def ask_question(
             answer="I couldn't find relevant information in the available documents.",
             sources=[],
         )
+    try:
+        answer = generate_rag_answer(body.query, results)
 
-    answer = generate_rag_answer(body.query, results)
+    except AuthenticationError:
+        raise HTTPException(
+            status_code=500,
+            detail="AI service configuration error.",
+        )
+    except RateLimitError:
+        raise HTTPException(
+            status_code=503,
+            detail="AI service request timed out.",
+        )
+    except APITimeoutError:
+        raise HTTPException(
+        status_code=504,
+        detail="AI service request timed out.",
+    )
 
+    except APIConnectionError:
+       raise HTTPException(
+        status_code=502,
+        detail="Could not connect to the AI service.",
+        )
+
+    except APIStatusError:
+        raise HTTPException(
+            status_code=502,
+            detail="AI service returned an error.",
+        )
     sources = extract_citations(answer, results)
     return AskResponse(
         query=body.query,

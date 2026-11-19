@@ -1,7 +1,17 @@
 import os
+import logging
 
 from dotenv import load_dotenv
 from groq import Groq
+from groq import(
+    APIConnectionError,
+    APITimeoutError,
+    APIStatusError,
+    AuthenticationError,
+    RateLimitError,
+)
+from src.logger import get_logger
+logger = get_logger(__name__)
 
 load_dotenv()
 
@@ -37,25 +47,31 @@ def generate_answer(question: str, results: list[dict]) -> str:
     context = "\n\n".join(context_parts)
 
     client = Groq(api_key=os.environ["GROQ_API_KEY"])
-
-    response = client.chat.completions.create(
-        model=MODEL,
-        messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {
-                "role": "user",
-                "content": (
-                    f"Question:\n{question}\n\n"
-                    f"Reference context:\n<context>\n{context}\n</context>\n\n"
-                    "Answer using the reference context. Cite sources using "
-                    "labels such as [Source 1]. If the context is insufficient, "
-                    "state that clearly."
-                ),
-            },
-        ],
-        temperature=0.2,
-        max_completion_tokens=600,
-    )
+    try:
+        response = client.chat.completions.create(
+            model=MODEL,
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {
+                    "role": "user",
+                    "content": (
+                        f"Question:\n{question}\n\n"
+                        f"Reference context:\n<context>\n{context}\n</context>\n\n"
+                        "Answer using the reference context. Cite sources using "
+                        "labels such as [Source 1]. If the context is insufficient, "
+                        "state that clearly."
+                    ),
+                },
+            ],
+            temperature=0.2,
+            max_completion_tokens=600,
+        )
+    except AuthenticationError:
+        logger.exception("Groq authentication failed")
+        raise
+    except RateLimitError:
+        logger.exception("Groq rate limit exceeded")
+        raise
 
     answer = response.choices[0].message.content
 

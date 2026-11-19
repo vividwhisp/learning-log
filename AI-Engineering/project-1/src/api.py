@@ -1,4 +1,3 @@
-
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Request
@@ -7,19 +6,25 @@ from pydantic import BaseModel, Field
 from src.reranked_search import RerankedSearch
 from src.generation import generate_rag_answer
 from src.citations import extract_citations
+from src.logger import get_logger
+
+logger = get_logger(__name__)
 
 
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    logger.info("Initializing search services")
     # Initialize the model and Qdrant once at startup.
     app.state.searcher = RerankedSearch()
-
+    logger.info("Search services initialized successfully")
     try:
         yield
     finally:
+        logger.info("Shutting down search services")
         app.state.searcher.close()
+        logger.info("Search services shut down")
 
 
 app = FastAPI(
@@ -80,13 +85,13 @@ def search_documents(
         )
 
     searcher = request.app.state.searcher
-
+    logger.info("Search request received")
     results = searcher.search(
         query=body.query,
         limit=body.limit,
         source=body.source,
     )
-
+    logger.info("Search completed. Results found: %d", len(results))
     return SearchResponse(
         query=body.query,
         total_results=len(results),
@@ -105,13 +110,13 @@ def ask_question(
         )
 
     searcher = request.app.state.searcher
-
+    logger.info("Ask request received")
     results = searcher.search(
         query=body.query,
         limit=body.limit,
         source=body.source,
     )
-
+    logger.info("Retrieval completed. Results found: %d", len(results))
     if not results:
         return AskResponse(
             query=body.query,

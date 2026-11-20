@@ -1,5 +1,5 @@
+import time
 from contextlib import asynccontextmanager
-
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel, Field
 
@@ -41,6 +41,19 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+@app.middleware("http")
+async def measure_request_time(request, call_next):
+    start = time.perf_counter()
+    response = await call_next(request)
+    elapsed = (time.perf_counter() - start) * 1000
+    logger.info(
+        "%s %s | Status: %s | Duration: %.2f ms",
+        request.method,
+        request.url.path,
+        response.status_code,
+        elapsed,
+    )
+    return response
 
 class SearchRequest(BaseModel):
     query: str = Field(min_length=1, max_length=1000)

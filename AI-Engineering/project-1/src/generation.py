@@ -51,7 +51,7 @@ def build_messages(question: str, results: list[dict]) -> list[dict]:
 
         reference_data = {
             "question": question,
-            "retreived_documents": context_documents,
+            "retrieved_documents": context_documents,
         }
 
         return [
@@ -90,7 +90,7 @@ def generate_answer(question: str, results: list[dict]) -> str:
     try:
         response = client.chat.completions.create(
             model=MODEL,
-            messages=build_messages(question, results)
+            messages=build_messages(question, results),
             temperature=0.2,
             max_completion_tokens=600,
         )

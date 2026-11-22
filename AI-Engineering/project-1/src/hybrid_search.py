@@ -6,16 +6,16 @@ class HybridSearch:
         self.dense_search = SemanticSearch()
         self.sparse_search = BM25Search()
 
-    def search(self, query: str, limit : int = 5, fetch_limit: int = 10, k : int = 60, source : str | None = None) -> list[dict]:
+    def search(self, query: str, tenant_id: str, limit : int = 5, fetch_limit: int = 10, k : int = 60, source : str | None = None) -> list[dict]:
         if not query.strip():
             return []
 
         dense_results = self.dense_search.search(
-            query, limit=fetch_limit, source=source
+            query, tenant_id=tenant_id, limit=fetch_limit, source=source
         )
 
         sparse_results = self.sparse_search.search(
-            query, limit=fetch_limit, source=source
+            query, tenant_id=tenant_id, limit=fetch_limit, source=source
         )
 
         fused = {}

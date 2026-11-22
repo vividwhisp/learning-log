@@ -1,6 +1,6 @@
 import time
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Header, Depends
 from pydantic import BaseModel, Field
 
 from src.reranked_search import RerankedSearch
@@ -18,7 +18,21 @@ from groq import(
 logger = get_logger(__name__)
 
 
+def get_current_tenant(x_demo_user: str = Header(default="")) -> str:
+    demo_users = {
+        "alice-demo-token" : "alice_001",
+        "bob-demo-token": "bob_001",
+    }
 
+    tenant_id = demo_users.get(x_demo_user)
+
+    if tenant_id is None:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or missing demo identity. ",
+        )
+
+    return tenant_id
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -97,6 +111,7 @@ def health():
 def search_documents(
     body: SearchRequest,
     request: Request,
+    tenant_id: str = Depends(get_current_tenant),
 ):
     if not body.query.strip():
         raise HTTPException(
@@ -108,6 +123,7 @@ def search_documents(
     logger.info("Search request received")
     results = searcher.search(
         query=body.query,
+        tenant_id=tenant_id,
         limit=body.limit,
         source=body.source,
     )
@@ -122,6 +138,7 @@ def search_documents(
 def ask_question(
     body: SearchRequest,
     request: Request,
+    tenant_id: str = Depends(get_current_tenant),
 ):
     if not body.query.strip():
         raise HTTPException(
@@ -133,6 +150,7 @@ def ask_question(
     logger.info("Ask request received")
     results = searcher.search(
         query=body.query,
+        tenant_id=tenant_id,
         limit=body.limit,
         source=body.source,
     )
@@ -179,3 +197,4 @@ def ask_question(
         answer=answer,
         sources=sources,
     )
+

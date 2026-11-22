@@ -89,6 +89,7 @@ def ingest_documents() -> list[dict]:
                     "source": file_path.name,
                     "chunk_index": index,
                     "text": chunk,
+                    "tenant_id": "alice_001",
                 }
             )
 

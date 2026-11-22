@@ -22,11 +22,14 @@ class BM25Search:
 
         self.bm25 = BM25Okapi(self.tokenized_chunks)
 
-    def search(self, query: str, limit: int = 5, source : str | None = None) -> list[dict]:
+    def search(self, query: str, tenant_id: str,  limit: int = 5, source : str | None = None) -> list[dict]:
         query = query.strip()
 
         if not query:
             return []
+
+        if not tenant_id:
+            raise ValueError("tenant_id is required")
 
         tokenized_query = tokenize(query)
 
@@ -38,7 +41,8 @@ class BM25Search:
         eligible_indices = [
             index
             for index, chunk in enumerate(self.chunks)
-            if source is None or chunk["source"] == source
+            if chunk.get("tenant_id") == tenant_id
+            and (source is None or chunk["source"] == source)
 
         ]
 

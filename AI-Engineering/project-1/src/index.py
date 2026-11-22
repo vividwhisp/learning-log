@@ -55,6 +55,12 @@ def main():
         field_schema=PayloadSchemaType.KEYWORD,
         wait=True,
         )
+        client.create_payload_index(
+            collection_name=COLLECTION,
+            field_name="tenant_id",
+            field_schema=PayloadSchemaType.KEYWORD,
+            wait=True,
+        )
 
         print("Created payload index for source.")
         points = []
@@ -74,6 +80,7 @@ def main():
                         "source": chunk["source"],
                         "chunk_index": chunk["chunk_index"],
                         "text": chunk["text"],
+                        "tenant_id": "alice_001",
                     },
                 )
             )

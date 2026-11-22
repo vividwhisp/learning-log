@@ -21,51 +21,67 @@ class SemanticSearch:
             self.client.close()
             raise
 
-    def search(self, query:str, limit: int = 5, source : str | None = None) -> list[dict]:
+    
+    def search(
+        self,
+        query: str,
+        tenant_id: str,
+        limit: int = 5,
+        source: str | None = None,
+    ) -> list[dict]:
+
         query = query.strip()
         if not query:
             return []
 
+        if not tenant_id:
+            raise ValueError("tenant_id is required")
+
         query_vector = self.model.encode(
             query,
             convert_to_numpy=True,
-
         ).tolist()
 
-        query_filter = None
+        conditions = [
+            FieldCondition(
+                key="tenant_id",
+                match=MatchValue(value=tenant_id),
+            )
+        ]
 
         if source is not None:
-            query_filter = Filter(
-                must=[
-                    FieldCondition(
-                        key="source",
-                        match=MatchValue(value=source),
-                    )
-                ]
+            conditions.append(
+                FieldCondition(
+                    key="source",
+                    match=MatchValue(value=source),
+                )
             )
+
+        query_filter = Filter(must=conditions)
+
         response = self.client.query_points(
-            collection_name = COLLECTION,
+            collection_name=COLLECTION,
             query=query_vector,
             limit=limit,
-            with_payload = True,
+            with_payload=True,
             query_filter=query_filter,
         )
+
         results = []
 
         for point in response.points:
             payload = point.payload or {}
 
-            results.append(
-                {
-                    "title": payload.get("title", "Untitled"),
-                    "source": payload.get("source", "Unknown"),
-                    "chunk_index": payload.get("chunk_index"),
-                    "text": payload.get("text", ""),
-                    "score": point.score,
-                }
-            )
+            results.append({
+                "title": payload.get("title", "Untitled"),
+                "source": payload.get("source", "Unknown"),
+                "chunk_index": payload.get("chunk_index"),
+                "text": payload.get("text", ""),
+                "score": point.score,
+            })
 
         return results
+
 
     def close(self):
         self.client.close()

@@ -1,6 +1,7 @@
 import json
 import re
 from pathlib import Path
+from src.privacy import scan_text, redact_text
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
@@ -75,7 +76,11 @@ def ingest_documents() -> list[dict]:
     records = []
 
     for file_path in files:
-        text = file_path.read_text(encoding="utf-8")
+        original_text = file_path.read_text(encoding="utf-8")
+        findings = scan_text(original_text)
+        if findings:
+            print(f"{file_path.name}: Sensitive data detected: {findings}")
+        text = redact_text(original_text)
         title = extract_title(text, file_path)
         chunks = chunk_text(text)
 

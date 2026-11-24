@@ -147,3 +147,31 @@ def test_llm_handles_direct_prompt_injection():
     print("\nDirect injection response:", answer)
 
     assert len(answer.strip()) > 0
+
+from src.generation import build_messages
+
+
+def test_all_retrieved_documents_are_included():
+    results = [
+        {
+            "source": f"document_{i}.md",
+            "chunk_index": i,
+            "text": f"Document content {i}",
+        }
+        for i in range(3)
+    ]
+
+    messages = build_messages("Explain the documents", results)
+
+    payload = json.loads(
+        messages[1]["content"].split("\n\n", 1)[1]
+    )
+
+    documents = payload["retrieved_documents"]
+
+    assert len(documents) == 3
+    assert [doc["content"] for doc in documents] == [
+        "Document content 0",
+        "Document content 1",
+        "Document content 2",
+    ]

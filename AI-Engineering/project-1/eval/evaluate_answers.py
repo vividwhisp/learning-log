@@ -23,6 +23,7 @@ def main():
             print(f"\nEvaluating {case['id']} : {question}")
             results = searcher.search(
                 query=question,
+                tenant_id="alice_001",
                 limit=5,
             )
 

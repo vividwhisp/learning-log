@@ -35,7 +35,7 @@ def evaluate_retriever(name, search_function, queries, debug_candidates=None,):
             for chunk in item["relevant_chunks"]
         }
 
-        results = search_function(query, limit=LIMIT)
+        results = search_function(query,tenant_id="alice_001", limit=LIMIT)
         retrieved = [chunk_id(result) for result in results]
 
         relevant_ranks = [
@@ -117,9 +117,10 @@ def main():
     debug_candidates = {}
 
     try:
-        def hybrid_reranked_search(query, limit=5):
+        def hybrid_reranked_search(query, tenant_id,limit=5):
             candidates = searcher.search(
                 query,
+                tenant_id=tenant_id,
                 limit=20,
                 fetch_limit=20,
             )

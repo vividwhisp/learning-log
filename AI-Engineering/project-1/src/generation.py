@@ -10,6 +10,7 @@ from groq import(
     AuthenticationError,
     RateLimitError,
 )
+from src.privacy import redact_text
 from src.logger import get_logger
 logger = get_logger(__name__)
 
@@ -43,13 +44,13 @@ def build_messages(question: str, results: list[dict]) -> list[dict]:
     for index, result in enumerate(results, start=1):
         context_documents.append({
             "source_label": f"Source {index}",
-            "source" : result["source"],
+            "source" : redact_text(result["source"]),
             "chunk_index": result["chunk_index"],
-            "content":result["text"],
+            "content":redact_text(result["text"]),
         })
 
     reference_data = {
-        "question": question,
+        "question": redact_text(question),
         "retrieved_documents": context_documents,
     }
 
@@ -92,7 +93,7 @@ def generate_answer(question: str, results: list[dict]) -> str:
     if not answer:
         raise RuntimeError("The LLM returned an empty answer.")
 
-    return answer
+    return redact_text(answer)
 
 def generate_rag_answer(question: str, results: list[dict]) -> str:
     return generate_answer(question, results)

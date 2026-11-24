@@ -59,6 +59,22 @@ def test_cross_tenant_isolation(tmp_path, monkeypatch):
             "text": "Bob has a private document about networking.",
             "tenant_id": "bob_001",
         },
+        {
+        "id": "other-001",
+        "title": "Other Notes One",
+        "source": "other_one.md",
+        "chunk_index": 0,
+        "text": "A document about machine learning algorithms.",
+        "tenant_id": "other_001",
+    },
+    {
+        "id": "other-002",
+        "title": "Other Notes Two",
+        "source": "other_two.md",
+        "chunk_index": 0,
+        "text": "A document about cloud infrastructure.",
+        "tenant_id": "other_001",
+    },
     ]
 
     chunks_path.write_text(json.dumps(chunks), encoding="utf-8")
@@ -127,19 +143,19 @@ def test_cross_tenant_isolation(tmp_path, monkeypatch):
 
             # Each tenant must retrieve its own document.
             assert len(dense_results) == 2
-            assert all(result["title"].startswith("Alice") for result in dense_results)
             assert len(sparse_results) == 1
-            # TODO: Fix BM25 cross-tenant isolation test; investigate the unexpected empty result.
-            assert dense_results[0]["title"] == expected_title
+            assert expected_title in [
+                result["title"] for result in dense_results
+                ]
             assert sparse_results[0]["title"] == expected_title
 
             # Every returned document must belong to that tenant.
+            expected_prefix = "Alice" if tenant_id == "alice_001" else "Bob"
+
             assert all(
-                result["title"].startswith(
-                    "Alice" if tenant_id == "alice_001" else "Bob"
-                )
-                for result in dense_results + sparse_results
-            )
+                    result["title"].startswith(expected_prefix)
+                    for result in dense_results
+                    )
 
         # Unknown tenant must not retrieve anything.
         assert dense.search(

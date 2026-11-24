@@ -13,7 +13,7 @@
       }
     ],
     "answerability": "answerable",
-    "generated_answer": "A **Kubernetes Pod** is the smallest deployable unit in a Kubernetes cluster. It represents a workload that runs on a worker node and typically contains one or more tightly‑coupled containers that share the same network namespace, storage volumes, and other resources. In other words, Pods are the units that the control plane schedules onto worker nodes to run your containerized applications【Source 1】.",
+    "generated_answer": "A **Kubernetes Pod** is the smallest deployable unit in a Kubernetes cluster.  \nIt groups one or more tightly‑coupled containers that share the same network namespace (so they can reach each other via `localhost`) and can also share storage volumes. Pods are intended to be disposable—if a node fails, a rollout occurs, or a controller decides a replacement is needed, the Pod may be terminated and a new one created. Because of this, applications should not rely on a Pod’s IP address remaining stable.  \n\n*Sources:*  \n- Pods run application workloads on worker nodes 【Source 1】  \n- “A Pod is the smallest deployable unit … contains one or more closely related containers that share a network namespace and can share storage volumes … Pods are disposable … Applications should not rely on a Pod's IP address remaining stable.” 【Source 2】",
     "retrieved_results": [
       {
         "title": "Kubernetes Fundamentals",
@@ -67,6 +67,12 @@
         "source": "kubernetes.md",
         "chunk_index": 0,
         "text": "# Kubernetes Fundamentals\n\n## What Kubernetes Does\n\nKubernetes is a platform for deploying and operating containerized applications across a cluster of machines. It provides a declarative API: instead of manually starting every container, an operator describes the desired state, and Kubernetes controllers work to move the actual state toward that desired state. Kubernetes does not build application images; images are typically built by a separate tool or CI pipeline and then referenced by workloads.\n\nA Kubernetes cluster contains a control plane and worker nodes. The control plane stores cluster state and makes scheduling and coordination decisions. Worker nodes run application workloads in Pods. In a managed Kubernetes service, the provider operates some or all of the control-plane components, while the user still configures workloads, access, networking, and resources.\n\n## Pods, Deployments, and ReplicaSets"
+      },
+      {
+        "title": "Kubernetes Fundamentals",
+        "source": "kubernetes.md",
+        "chunk_index": 1,
+        "text": "of the control-plane components, while the user still configures workloads, access, networking, and resources.\n\n## Pods, Deployments, and ReplicaSets\n\nA Pod is the smallest deployable unit in Kubernetes. A Pod contains one or more closely related containers that share a network namespace and can share storage volumes. Containers inside the same Pod can communicate through `localhost`. Pods are disposable: a Pod may be replaced when a node fails, a rollout occurs, or a controller decides that replacement is needed. Applications should not rely on a Pod's IP address remaining stable.\n\nA Deployment manages a replicated application through ReplicaSets. It is commonly used for stateless services such as HTTP APIs. The Deployment declares the desired number of replicas and a Pod template. Kubernetes creates or updates Pods to match that declaration and supports rolling updates and rollbacks.\n\nExample Deployment:"
       }
     ]
   },
@@ -85,7 +91,7 @@
       }
     ],
     "answerability": "answerable",
-    "generated_answer": "A Kubernetes **Deployment** keeps the application’s replica count in sync by using a **ReplicaSet** controller.  \nWhen you create a Deployment you specify the **desired number of replicas** together with a Pod template. The Deployment then creates (or updates) a ReplicaSet that owns the Pods. The ReplicaSet continuously watches the actual number of Pods that match the template and:\n\n* **Creates new Pods** whenever the current count is lower than the desired count (e.g., after a node failure or pod termination).  \n* **Deletes excess Pods** if the count is higher than requested (e.g., after a scaling down operation).  \n\nBecause the ReplicaSet is constantly reconciling the actual state with the declared desired state, the Deployment ensures that the application always runs the exact number of replicas you asked for, handling rollouts, rollbacks, and recovery automatically【Source 1】.",
+    "generated_answer": "A Deployment is a declarative controller. In its **spec** you declare a `replicas` count and a Pod template. The Deployment creates (or updates) a **ReplicaSet** that is responsible for keeping exactly that many Pods alive — the desired state.  \n\n* The control‑plane continuously watches the Deployment’s `replicas` field.  \n* If a Pod in the ReplicaSet crashes, is evicted, or a node fails, the ReplicaSet notices that the actual number of healthy Pods is below the desired count and creates new Pods to replace them.  \n* Conversely, if there are more Pods than the declared replica count (for example after a scale‑down), the ReplicaSet terminates the excess Pods.  \n\nThus the Deployment, via its underlying ReplicaSet controller, continuously reconciles the actual cluster state toward the declared number of replicas, ensuring the application always runs with the requested amount of instances【Source 1】, and the example manifest shows the `replicas: 3` field that drives this behavior【Source 3】.",
     "retrieved_results": [
       {
         "title": "Kubernetes Fundamentals",
@@ -139,6 +145,12 @@
         "source": "kubernetes.md",
         "chunk_index": 1,
         "text": "of the control-plane components, while the user still configures workloads, access, networking, and resources.\n\n## Pods, Deployments, and ReplicaSets\n\nA Pod is the smallest deployable unit in Kubernetes. A Pod contains one or more closely related containers that share a network namespace and can share storage volumes. Containers inside the same Pod can communicate through `localhost`. Pods are disposable: a Pod may be replaced when a node fails, a rollout occurs, or a controller decides that replacement is needed. Applications should not rely on a Pod's IP address remaining stable.\n\nA Deployment manages a replicated application through ReplicaSets. It is commonly used for stateless services such as HTTP APIs. The Deployment declares the desired number of replicas and a Pod template. Kubernetes creates or updates Pods to match that declaration and supports rolling updates and rollbacks.\n\nExample Deployment:"
+      },
+      {
+        "title": "Kubernetes Fundamentals",
+        "source": "kubernetes.md",
+        "chunk_index": 2,
+        "text": "icas and a Pod template. Kubernetes creates or updates Pods to match that declaration and supports rolling updates and rollbacks.\n\nExample Deployment:\n\n```yaml\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: api\nspec:\n  replicas: 3\n  selector:\n    matchLabels:\n      app: api\n  template:\n    metadata:\n      labels:\n        app: api\n    spec:\n      containers:\n        - name: api\n          image: example/api:1.0.0\n          ports:\n            - containerPort: 8000\n          resources:\n            requests:\n              cpu: \"100m\"\n              memory: \"128Mi\"\n            limits:\n              cpu: \"500m\"\n              memory: \"256Mi\"\n```\n\nThe Deployment selector must match the labels on its Pod template. Resource requests describe the resources Kubernetes uses for scheduling. Limits constrain resource use, with CPU throttling and memory termination behavior depending on the resource and runtime. Values should be based on observation and load testing rather than copied blindly."
       }
     ]
   },
@@ -156,7 +168,7 @@
       }
     ],
     "answerability": "answerable",
-    "generated_answer": "Containers that are part of the same Kubernetes **Pod** share a single network namespace. Because of this they can reach each other directly via the loop‑back interface—i.e., using `localhost` (or `127.0.0.1`) and the appropriate port numbers. This intra‑Pod communication does not require any special service or network routing; the containers simply talk to each other as if they were processes on the same host.  \n\n**Source:** The documentation notes that “Containers inside the same Pod can communicate through `localhost`” and that they share a network namespace【Source 1】.",
+    "generated_answer": "Containers that are placed in the same Pod share a single network namespace. Because of this they can reach each other directly over **localhost** (the loop‑back interface) using whatever ports the containers expose. In practice this means one container can call another by connecting to `127.0.0.1:<port>` just as if it were a process on the same host.  \n\n*Source: Source 1*",
     "retrieved_results": [
       {
         "title": "Kubernetes Fundamentals",
@@ -204,14 +216,7 @@
         "rerank_score": -1.1736557483673096
       }
     ],
-    "extracted_citations": [
-      {
-        "title": "Kubernetes Fundamentals",
-        "source": "kubernetes.md",
-        "chunk_index": 1,
-        "text": "of the control-plane components, while the user still configures workloads, access, networking, and resources.\n\n## Pods, Deployments, and ReplicaSets\n\nA Pod is the smallest deployable unit in Kubernetes. A Pod contains one or more closely related containers that share a network namespace and can share storage volumes. Containers inside the same Pod can communicate through `localhost`. Pods are disposable: a Pod may be replaced when a node fails, a rollout occurs, or a controller decides that replacement is needed. Applications should not rely on a Pod's IP address remaining stable.\n\nA Deployment manages a replicated application through ReplicaSets. It is commonly used for stateless services such as HTTP APIs. The Deployment declares the desired number of replicas and a Pod template. Kubernetes creates or updates Pods to match that declaration and supports rolling updates and rollbacks.\n\nExample Deployment:"
-      }
-    ]
+    "extracted_citations": []
   },
   {
     "id": 4,
@@ -227,7 +232,7 @@
       }
     ],
     "answerability": "answerable",
-    "generated_answer": "A **LEFT JOIN** keeps every row from the left (first) table even if there is no corresponding row in the right (second) table. For those left‑hand rows that have no match, the result set includes the left‑hand columns as usual and fills the columns from the right table with **NULL** values (e.g., `COUNT(t.id)` would be zero for such a row).【Source 1】",
+    "generated_answer": "A **LEFT JOIN** always keeps all rows from the left (first) table.  \nIf a particular left‑hand row has no matching row in the right table, the result still includes that left row, but the columns that come from the right table are filled with **NULL** values. (Consequently, expressions such as `COUNT(t.id)` will evaluate to 0 for those rows.)【Source 1】",
     "retrieved_results": [
       {
         "title": "PostgreSQL Fundamentals",
@@ -300,7 +305,7 @@
       }
     ],
     "answerability": "answerable",
-    "generated_answer": "PostgreSQL’s transaction system is built to satisfy the four ACID guarantees:\n\n| Property | What it means for PostgreSQL |\n|----------|------------------------------|\n| **Atomicity** | All the statements in a transaction are treated as a single unit – they either all succeed (and are committed) or none of them take effect (the transaction can be rolled back). |\n| **Consistency** | A transaction moves the database from one valid state to another, preserving all defined rules, constraints, and data integrity checks. |\n| **Isolation** | Concurrent transactions are kept separate so that the intermediate results of one transaction are not visible to others until the transaction commits. PostgreSQL provides several isolation levels (e.g., Read Committed, Repeatable Read, Serializable) to control this behavior. |\n| **Durability** | Once a transaction has been committed, its changes are permanently recorded on disk (WAL‑logged) and will survive system crashes or power failures. |\n\nThese properties are explicitly supported by PostgreSQL, with `BEGIN` to start a transaction, `COMMIT` to make changes permanent, and `ROLLBACK` to discard them if an error occurs【Source 1】.",
+    "generated_answer": "PostgreSQL transactions are designed to satisfy the four ACID properties:\n\n* **Atomicity** – a transaction’s changes are all applied together; if any part fails, the whole transaction can be rolled back.  \n* **Consistency** – the database moves from one valid state to another, preserving all defined rules, constraints, and invariants.  \n* **Isolation** – concurrent transactions are kept separate so that each sees a consistent view of the data (PostgreSQL uses MVCC to enforce this).  \n* **Durability** – once a transaction is committed, its effects are permanently recorded and will survive system crashes.\n\nThese four properties are explicitly supported by PostgreSQL transactions【Source 1】.",
     "retrieved_results": [
       {
         "title": "PostgreSQL Fundamentals",
@@ -372,7 +377,7 @@
       }
     ],
     "answerability": "answerable",
-    "generated_answer": "PostgreSQL can make a query run faster mainly by using **indexes**.  \nWhen an index exists on the columns that appear in a WHERE clause, a JOIN condition, or an ORDER BY, the planner can locate the matching rows by navigating the index structure instead of scanning every row in the table. This reduces I/O and CPU work, especially for large tables, and therefore improves overall query performance【Source 1】.\n\n### Trade‑offs of using indexes\n\n| Benefit | Cost / Trade‑off |\n|---------|------------------|\n| **Faster look‑ups and joins** – the index lets PostgreSQL find matching rows without a full table scan. | **Extra storage** – each index occupies disk space (and memory when cached). |\n| **Supports many query patterns** – the default B‑tree index handles equality and range predicates; specialized types (e.g., GIN) are available for particular data types and operators. | **Write overhead** – every INSERT, UPDATE, or DELETE must also modify any indexes on the affected columns, making write operations slower. |\n| | **Maintenance** – indexes need to be rebuilt or vacuumed periodically to stay efficient, adding administrative effort. |\n| | **Over‑indexing risk** – creating an index on every column rarely helps and can degrade performance because of the storage and write costs. |\n\nIn short, indexes are the primary mechanism PostgreSQL uses to accelerate query execution, but they come with storage consumption and additional work on data‑modifying statements, so they should be added judiciously based on the workload and query patterns【Source 1】.",
+    "generated_answer": "**How PostgreSQL improves query performance**\n\nPostgreSQL relies on its query planner and a variety of index structures to avoid scanning whole tables.  \n* When an appropriate index exists, the planner can use it to locate matching rows directly, which speeds up look‑ups and joins dramatically 【Source 1】.  \n* The default B‑tree index supports most equality and range predicates, while specialized index types (e.g., GIN) handle particular data types and operators more efficiently 【Source 1】.  \n* Multicolumn indexes are most effective when the column order mirrors the way queries filter or sort the data; a well‑ordered composite index can satisfy several predicates in a single scan 【Source 5】.  \n* Keeping database statistics up‑to‑date lets the planner make informed decisions about when to use an index versus a sequential scan, and tools like `EXPLAIN` / `EXPLAIN ANALYZE` let you verify that an index is actually being used 【Source 5】.\n\n**Trade‑offs of using indexes**\n\n| Benefit | Cost / Trade‑off |\n|---------|------------------|\n| **Faster reads** – indexes let PostgreSQL find rows without a full table scan. | **Additional storage** – each index occupies disk space (and memory when cached). |\n| **Better join performance** – indexes on join columns reduce the work needed to match rows. | **Write overhead** – every `INSERT`, `UPDATE`, or `DELETE` must also modify any indexes on the affected columns, increasing CPU and I/O. |\n| **Support for specialized queries** – GIN, GiST, etc., enable efficient search on arrays, full‑text, geometric data. | **Maintenance complexity** – indexes must be kept in sync with the table; stale or unnecessary indexes can degrade performance and must be monitored (e.g., via `ANALYZE`). |\n| **Multicolumn indexes** can satisfy multiple predicates at once. | **Selectivity sensitivity** – if the column order does not match typical query patterns, the index may be ignored, providing no",
     "retrieved_results": [
       {
         "title": "PostgreSQL Fundamentals",
@@ -426,6 +431,12 @@
         "source": "postgresql.md",
         "chunk_index": 6,
         "text": "pdates safely, and verify that each update affected the expected number of rows. If an error occurs before commit, the transaction can be rolled back.\n\nPostgreSQL uses multiversion concurrency control (MVCC) so concurrent transactions can work with consistent versions of rows. Isolation levels control which concurrent changes a transaction can observe. Applications should be prepared to retry certain transactions when concurrency conflicts or serialization failures occur.\n\n## Indexes and Query Performance\n\nAn index can speed up lookups and joins by helping PostgreSQL find matching rows without scanning the entire table. Indexes also consume storage and add work to inserts, updates, and deletes, so adding an index to every column is not a good strategy. B-tree is the default index type and supports many equality and range queries. Other index types, such as GIN, are useful for particular data types and operators."
+      },
+      {
+        "title": "PostgreSQL Fundamentals",
+        "source": "postgresql.md",
+        "chunk_index": 7,
+        "text": "e default index type and supports many equality and range queries. Other index types, such as GIN, are useful for particular data types and operators.\n\n```sql\nCREATE INDEX idx_tasks_project_created\nON tasks (project_id, created_at DESC);\n```\n\nA multicolumn index is most effective when its column order matches useful query patterns. Use `EXPLAIN` to inspect a planned query and `EXPLAIN ANALYZE` to execute it and report actual timings and row counts. Analyze the query plan before adding indexes based only on intuition. Keep database statistics current so the planner can make informed choices.\n\n## Connecting from a Python API"
       }
     ]
   },
@@ -444,7 +455,7 @@
       }
     ],
     "answerability": "answerable",
-    "generated_answer": "Python’s type‑hinting syntax is meant to **describe the intended types of function parameters, return values, variables, etc.**.  \nThese annotations give editors, reviewers, and static‑analysis tools (such as linters, type checkers, IDEs) concrete information they can use to spot mismatches, improve autocomplete, generate documentation, and generally make the code easier to understand and maintain.\n\nHowever, **type hints are not a runtime validation mechanism**. Python does not automatically check that the actual objects passed at execution time match the hinted types. If you need to enforce type constraints while the program runs, you must add explicit checks yourself or employ a library that performs runtime validation. 【Source 1】",
+    "generated_answer": "Python’s type‑hinting syntax is meant to **describe the intended types of function arguments, return values, variables, etc.**.  \nThese annotations give editors, reviewers and static‑analysis tools (e.g., mypy, Pyright) concrete information they can use for linting, autocomplete, refactoring and early‑stage error detection.  \n\nHowever, **type hints are not a runtime validation mechanism**. Python does not automatically check that the objects passed at execution time match the annotated types. If you need actual validation you must add explicit checks in the code or use a library (such as Pydantic) that interprets the annotations and performs runtime validation 【Source 1】.  \n\nSo, the purpose of type hints is to improve code readability and enable static analysis, and they do **not** automatically validate data at runtime.",
     "retrieved_results": [
       {
         "title": "Python Fundamentals for Backend and Data Applications",
@@ -516,7 +527,7 @@
       }
     ],
     "answerability": "answerable",
-    "generated_answer": "Python projects should use virtual environments because they **isolate the packages installed for a given project from the system‑wide Python installation and from other projects**. This isolation prevents dependency conflicts that can arise when different projects require different versions of the same library. By creating a virtual environment (e.g., with `python -m venv .venv`) and installing packages inside it, the project’s dependencies are kept separate and reproducible, and the installation process can be documented (e.g., via `requirements.txt`). This also makes it easier to manage and deploy the project reliably without affecting the global Python environment.  \n\n*Source: Source 1*",
+    "generated_answer": "Python projects should use virtual environments because they **isolate the packages installed for a given project from the system‑wide Python installation and from other projects**. This isolation:\n\n* **Prevents dependency conflicts** – each project can have its own versions of libraries without interfering with the versions required by another project or the global interpreter. 【Source 1】\n* **Supports reproducible deployments** – by keeping a project’s direct dependencies in a file such as `requirements.txt` and installing them inside the virtual environment, the exact versions used in development can be reproduced in production. 【Source 1】\n* **Keeps generated files out of source control** – the `.venv` directory (along with local secrets, bytecode caches, etc.) is meant to stay local and not be committed to Git, reducing the risk of leaking environment‑specific data. 【Source 1】【Source 5】\n\nOverall, a virtual environment ensures that the interpreter and its packages match the project’s needs, making development, testing, and deployment more reliable and easier to manage.",
     "retrieved_results": [
       {
         "title": "Python Fundamentals for Backend and Data Applications",
@@ -564,7 +575,20 @@
         "rerank_score": -4.745209693908691
       }
     ],
-    "extracted_citations": []
+    "extracted_citations": [
+      {
+        "title": "Python Fundamentals for Backend and Data Applications",
+        "source": "python.md",
+        "chunk_index": 2,
+        "text": "The explicit empty-sequence check prevents division by zero and makes the failure understandable to callers.\n\n## Virtual Environments and Dependencies\n\nA virtual environment isolates a project's installed Python packages from other projects and the system Python installation. This helps avoid dependency conflicts. Create one with `python -m venv .venv` and activate it using the command appropriate for your shell. Install dependencies with the environment's Python interpreter, for example `python -m pip install fastapi`, so the package installer corresponds to the interpreter being used.\n\nA project should record its direct dependencies in a dependency file such as `requirements.txt` or in the project's chosen packaging configuration. Reproducible deployments require deliberate dependency versions and a documented installation process. The `.venv` directory, local secrets, bytecode caches, and other generated files generally should not be committed to Git.\n\nUseful commands include:"
+      },
+      {
+        "title": "Python Fundamentals for Backend and Data Applications",
+        "source": "python.md",
+        "chunk_index": 3,
+        "text": ". The `.venv` directory, local secrets, bytecode caches, and other generated files generally should not be committed to Git.\n\nUseful commands include:\n\n```bash\npython --version\npython -m venv .venv\npython -m pip install -r requirements.txt\npython -m pip show fastapi\npython -m pip freeze\n```\n\n`python -m pip show` reports information about a package installed for the selected interpreter. If an editor reports that an import cannot be resolved, check which interpreter the editor uses before reinstalling packages. The terminal and editor can point to different environments.\n\n## Functions, Collections, and Data Structures\n\nFunctions package behavior into reusable units. Use descriptive names, keep functions focused, and return values instead of relying on unexpected global state. A list is ordered and mutable, a tuple is ordered and immutable, a dictionary maps keys to values, and a set stores unique elements. Choosing a suitable data structure improves both clarity and performance."
+      }
+    ]
   },
   {
     "id": 9,
@@ -581,7 +605,7 @@
       }
     ],
     "answerability": "answerable",
-    "generated_answer": "FastAPI validates incoming request data by leveraging **Pydantic models**.  \n\n1. **Define a model** – You create a class that inherits from `pydantic.BaseModel` and declare the expected fields, optionally adding constraints with `Field` (e.g., `min_length`, `max_length`, `ge`, `le`).  \n2. **Declare the model as a parameter** – In a route function, you type‑annotate a parameter with the Pydantic model (`def endpoint(request: MyModel)`).  \n3. **Automatic parsing & validation** – When a request reaches that endpoint, FastAPI reads the request body (JSON, form data, etc.), parses it into the model, and runs all the Pydantic validations.  \n4. **Error handling** – If any field fails its validation rules, FastAPI automatically returns a **422 Unprocessable Entity** response with details about the validation errors.  \n\nThus, FastAPI’s request‑data validation is performed by Pydantic’s parsing and constraint‑checking mechanisms, integrated directly into the endpoint signature【Source 1】.",
+    "generated_answer": "FastAPI relies on **Pydantic models** to check the data that a client sends to an endpoint.  \n\n1. **Define a model** – you create a class that inherits from `pydantic.BaseModel` and declare the expected fields, their types, and any constraints (e.g., `min_length`, `max_length`, `ge`, `le`).  \n\n   ```python\n   from pydantic import BaseModel, Field\n\n   class SearchRequest(BaseModel):\n       query: str = Field(min_length=1, max_length=500)\n       limit: int = Field(default=5, ge=1, le=20)\n   ```\n\n2. **Declare the model as a parameter** – in the route function you type‑annotate a parameter with that model (`request: SearchRequest`). FastAPI reads the request body (typically JSON), tries to instantiate the model, and automatically runs Pydantic’s validation logic.  \n\n   ```python\n   @app.post(\"/search\")\n   def search(request: SearchRequest) -> dict[str, object]:\n       ...\n   ```\n\n3. **Automatic error handling** – if the incoming payload is missing required fields, has the wrong type, or violates any of the declared constraints, Pydantic raises a validation error. FastAPI catches this and returns a **422 Unprocessable Entity** response that details the validation problems, without invoking the endpoint’s business logic.\n\nThus, FastAPI validates incoming request data by **parsing the request into a Pydantic model and applying the model’s type checks and field constraints before the endpoint function runs**【Source 1】. This keeps input validation separate from business logic and ensures that only well‑formed data reaches your code【Source 2】.",
     "retrieved_results": [
       {
         "title": "Python Fundamentals for Backend and Data Applications",
@@ -635,6 +659,12 @@
         "source": "python.md",
         "chunk_index": 9,
         "text": "sen strategy is intended to preserve the complete source text, concatenating its chunks should reproduce the input exactly.\n\n## HTTP APIs with FastAPI\n\nFastAPI is a Python framework for building HTTP APIs. A route maps an HTTP method and path to a Python function. Pydantic models can validate and parse request data. Keep input validation, business logic, and persistence sufficiently separated that they can be tested independently.\n\n```python\nfrom fastapi import FastAPI\nfrom pydantic import BaseModel, Field\n\napp = FastAPI()\n\nclass SearchRequest(BaseModel):\n    query: str = Field(min_length=1, max_length=500)\n    limit: int = Field(default=5, ge=1, le=20)\n\n@app.post(\"/search\")\ndef search(request: SearchRequest) -> dict[str, object]:\n    return {\"query\": request.query, \"limit\": request.limit, \"results\": []}\n```"
+      },
+      {
+        "title": "Python Fundamentals for Backend and Data Applications",
+        "source": "python.md",
+        "chunk_index": 10,
+        "text": "ost(\"/search\")\ndef search(request: SearchRequest) -> dict[str, object]:\n    return {\"query\": request.query, \"limit\": request.limit, \"results\": []}\n```\n\nThis is only a minimal endpoint skeleton; it validates the request but does not perform semantic retrieval. A search service would embed the query, request nearest vectors from a vector database, and serialize the matching document metadata and scores. An API should return predictable errors and avoid exposing internal stack traces or secrets to clients.\n\n## Logging and Configuration\n\nUse the `logging` module instead of sprinkling `print` calls throughout a long-running service. Include enough information to diagnose a problem, such as an operation name, request identifier, or document ID, while avoiding unnecessary personal data and secrets. Configure log levels by environment so development can be more verbose than production."
       }
     ]
   },
@@ -653,7 +683,7 @@
       }
     ],
     "answerability": "partial",
-    "generated_answer": "A PostgreSQL‑based money‑transfer service should treat each transfer as a single, atomic transaction that:\n\n1. **Locks the rows it will modify** – e.g., `SELECT … FOR UPDATE` (or run the whole transaction in `SERIALIZABLE` isolation) so that concurrent sessions cannot read a stale balance while another session is updating it.\n\n2. **Checks the balance before debiting** – read the source account’s current balance inside the same transaction and verify that the amount to be transferred will not make the balance negative.\n\n3. **Performs the debit and credit updates** – execute the `UPDATE` statements for both accounts and **verify that each `UPDATE` affected exactly one row** (the expected number of rows). If an update reports zero rows affected, the transaction should be aborted because the data has changed under it.\n\n4. **Commits or rolls back** – if any step fails (insufficient funds, row‑count mismatch, or a concurrency conflict), roll back the transaction so no partial changes remain.\n\n5. **Handles concurrency conflicts** – because PostgreSQL uses MVCC, two concurrent transfers may conflict. The application must be prepared to **catch serialization failures or deadlock errors** and retry the whole transaction a few times until it succeeds.\n\nThese steps follow PostgreSQL’s recommended pattern for safe concurrent updates: use MVCC‑aware transactions, check row counts, and retry when serialization failures occur【Source 1】. This approach guarantees that overdrafts cannot happen even when many transfers are processed at the same time.",
+    "generated_answer": "A PostgreSQL‑based service should treat a money‑transfer as a single, atomic transaction and explicitly protect the two account rows from concurrent modifications. A typical pattern is:\n\n1. **Start an explicit transaction** (`BEGIN`).  \n2. **Lock the source and destination rows** – e.g. `SELECT … FROM accounts WHERE id = … FOR UPDATE` – so that no other session can change the balances while the transfer is in progress.  \n3. **Validate the source account** – confirm that the row exists and that `balance >= amount`. If the check fails, abort the transaction (ROLLBACK) and return an “insufficient funds” error.  \n4. **Perform the updates** (or a single conditional update) inside the same transaction, e.g.:\n\n   ```sql\n   UPDATE accounts\n      SET balance = balance - 100\n    WHERE id = 1 AND balance >= 100;   -- source\n   UPDATE accounts\n      SET balance = balance + 100\n    WHERE id = 2;                      -- destination\n   ```\n\n   Verify that each `UPDATE` affected exactly one row; otherwise roll back.  \n5. **Commit** (`COMMIT`). If any error occurs before the commit, the transaction is rolled back automatically.\n\nBecause PostgreSQL uses MVCC, concurrent transactions can see consistent snapshots, but **serialization conflicts can still happen** (e.g., two transfers trying to debit the same account). The application should be prepared to **retry** the whole transaction when it receives a serialization failure (`SQLSTATE 40001`) or a dead‑lock error. Using a stricter isolation level such as `SERIALIZABLE` (or `REPEATABLE READ` with explicit row locks) helps guarantee that overdrafts cannot slip through when multiple sessions run concurrently【Source 2】.\n\nIn summary, the application must:\n\n* Wrap the debit and credit statements in a single transaction.  \n* Lock the relevant rows (`FOR UPDATE`) and check the balance before debiting.  \n* Verify that each update affects the expected row count.  \n* Roll back on any error and retry on serialization failures, leveraging PostgreSQL’s MVCC and isolation‑level controls【Source 1】【Source 2】.",
     "retrieved_results": [
       {
         "title": "PostgreSQL Fundamentals",
@@ -707,6 +737,12 @@
         "source": "postgresql.md",
         "chunk_index": 6,
         "text": "pdates safely, and verify that each update affected the expected number of rows. If an error occurs before commit, the transaction can be rolled back.\n\nPostgreSQL uses multiversion concurrency control (MVCC) so concurrent transactions can work with consistent versions of rows. Isolation levels control which concurrent changes a transaction can observe. Applications should be prepared to retry certain transactions when concurrency conflicts or serialization failures occur.\n\n## Indexes and Query Performance\n\nAn index can speed up lookups and joins by helping PostgreSQL find matching rows without scanning the entire table. Indexes also consume storage and add work to inserts, updates, and deletes, so adding an index to every column is not a good strategy. B-tree is the default index type and supports many equality and range queries. Other index types, such as GIN, are useful for particular data types and operators."
+      },
+      {
+        "title": "PostgreSQL Fundamentals",
+        "source": "postgresql.md",
+        "chunk_index": 5,
+        "text": "returns zero for a project with no matching task rows; counting all rows after an outer join can produce a different result.\n\n## Transactions and ACID\n\nA transaction groups database operations into one logical unit. PostgreSQL transactions support the ACID properties: atomicity, consistency, isolation, and durability. `BEGIN` starts an explicit transaction, `COMMIT` makes its changes permanent, and `ROLLBACK` discards uncommitted changes.\n\n```sql\nBEGIN;\nUPDATE accounts SET balance = balance - 100 WHERE id = 1;\nUPDATE accounts SET balance = balance + 100 WHERE id = 2;\nCOMMIT;\n```\n\nThe example illustrates a transfer that should update both accounts together. A production implementation must also validate that the source account exists and has sufficient funds, handle concurrent updates safely, and verify that each update affected the expected number of rows. If an error occurs before commit, the transaction can be rolled back."
       }
     ]
   },
@@ -716,7 +752,7 @@
     "expected_facts": [],
     "expected_sources": [],
     "answerability": "unanswerable",
-    "generated_answer": "I’m sorry, but the provided document does not contain information about how the Horizontal Pod Autoscaler works or how Kubernetes automatically scales Pods based on CPU utilization. I don’t have enough context to answer your question.",
+    "generated_answer": "I’m sorry, but the provided documents do not contain information about how the Horizontal Pod Autoscaler works or how Kubernetes automatically scales Pods based on CPU utilization.",
     "retrieved_results": [
       {
         "title": "Kubernetes Fundamentals",

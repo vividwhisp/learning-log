@@ -104,8 +104,6 @@ def test_injection_payloads_are_preserved_as_untrusted_data(
 
     assert malicious_instruction not in messages[0]["content"]
 
-    import json
-
     payload = json.loads(messages[1]["content"].split("\n\n", 1)[1])
 
     assert payload["retrieved_documents"][0]["content"] == results[0]["text"]

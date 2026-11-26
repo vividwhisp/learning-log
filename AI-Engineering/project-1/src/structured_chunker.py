@@ -1,33 +1,57 @@
 import re
 
-def split_markdown_sections(text: str) -> list[dict]:
+def get_overlap(text: str, overlap: int) -> str:
+    if overlap == 0:
+        return ""
+
+    start = max(0, len(text) - overlap)
+
+    # Move forward to the next whitespace so we don't start mid-word.
+    while start < len(text) and not text[start].isspace():
+        start += 1
+
+    return text[start:].strip()
+
+def split_markdown_sections(text: str):
+    document_title = ""
     sections = []
-    current_heading = []
-    current_content = []
+    heading_stack = []
+    current_lines = []
 
     for line in text.splitlines():
-        heading_match = re.match(r"^(#{1,6})\s+(.+)$", line)
+        match = re.match(r"^(#{1,6})\s+(.+)$", line)
 
-        if heading_match:
-            if current_content:
+        if match:
+            level = len(match.group(1))
+            heading_text = match.group(2).strip()
+
+            # The H1 is the document title, not a standalone section.
+            if level == 1:
+                document_title = heading_text
+                continue
+
+            # Save the previous section.
+            if current_lines:
                 sections.append({
-                    "heading": " > ".join(current_heading),
-                    "text":"\n".join(current_content).strip(),
+                    "heading": " > ".join(heading_stack),
+                    "text": "\n".join(current_lines).strip(),
                 })
-            level = len(heading_match.group(1))
-            title = heading_match.group(2).strip()
+                current_lines = []
 
-            current_heading = current_heading[:level - 1]
-            current_heading.append(title)
-            current_content = [line]
-        else:
-            current_content.append(line)
-    if current_content:
+            # Keep only the heading hierarchy relevant to this level.
+            heading_stack = heading_stack[:level - 2]
+            heading_stack.append(heading_text)
+
+        current_lines.append(line)
+
+    # Save the final section.
+    if current_lines:
         sections.append({
-            "heading": " > ".join(current_heading),
-            "text": "\n".join(current_content).strip(),
+            "heading": " > ".join(heading_stack),
+            "text": "\n".join(current_lines).strip(),
         })
-    return sections
+
+    return document_title, sections
 
 def split_blocks(text: str) -> list[dict]:
     blocks = []
@@ -71,8 +95,8 @@ def assemble_chunks(blocks: list[str], chunk_size: int = 1000, overlap: int = 15
             )
             current = ""
         else:
-            current = current[-overlap:] + "\n\n" + block if overlap else block
-
+            overlap_text = get_overlap(current, overlap)
+            current = f"{overlap_text}\n\n{block}".strip() if overlap_text else block
     if current:
         chunks.append(current)
 
@@ -131,5 +155,23 @@ def split_oversized_block(
 
     if current:
         chunks.append("\n".join(current))
+
+    return chunks
+
+def chunk_markdown(text: str):
+    document_title, sections = split_markdown_sections(text)
+    chunks = []
+
+    for section in sections:
+        blocks = split_blocks(section["text"])
+        section_chunks = assemble_chunks(blocks)
+
+        for chunk_text in section_chunks:
+            if chunk_text.strip():
+                chunks.append({
+                    "document_title": document_title,
+                    "heading": section["heading"],
+                    "text": chunk_text.strip()
+                })
 
     return chunks

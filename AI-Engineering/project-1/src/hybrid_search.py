@@ -2,9 +2,9 @@ from src.search import SemanticSearch
 from src.sparse_search import BM25Search
 
 class HybridSearch:
-    def __init__(self):
-        self.dense_search = SemanticSearch()
-        self.sparse_search = BM25Search()
+    def __init__(self, dense_search=None, sparse_search=None):
+        self.dense_search = dense_search or SemanticSearch()
+        self.sparse_search = sparse_search or BM25Search()
 
     def search(self, query: str, tenant_id: str, limit : int = 5, fetch_limit: int = 10, k : int = 60, source : str | None = None) -> list[dict]:
         if not query.strip():

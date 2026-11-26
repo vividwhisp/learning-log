@@ -1,4 +1,8 @@
 import re
+from src.search import SemanticSearch
+from src.sparse_search import BM25Search
+from src.hybrid_search import HybridSearch
+from src.reranked_search import RerankedSearch
 def classify_query(query: str) -> str:
     query = query.strip().lower()
 
@@ -55,3 +59,56 @@ def classify_query(query: str) -> str:
         return "hybrid"
 
     return "dense"
+class AdaptiveRetriever:
+
+    def __init__(self):
+        self.dense = SemanticSearch()
+        self.sparse = BM25Search()
+
+        self.hybrid = HybridSearch(
+            dense_search=self.dense,
+            sparse_search=self.sparse,
+        )
+
+        self.reranked = RerankedSearch(
+            hybrid_search=self.hybrid,
+        )
+
+    def search(
+        self,
+        query: str,
+        tenant_id: str,
+        limit: int = 5,
+        source: str | None = None,
+    ) -> dict:
+
+        strategy = classify_query(query)
+
+        if strategy == "dense":
+            results = self.dense.search(
+                query, tenant_id, limit, source
+            )
+
+        elif strategy == "sparse":
+            results = self.sparse.search(
+                query, tenant_id, limit, source
+            )
+
+        elif strategy == "hybrid":
+            results = self.hybrid.search(
+                query, tenant_id, limit, source=source
+            )
+
+        else:
+            results = self.reranked.search(
+                query, tenant_id, limit, source=source
+            )
+
+        return {
+            "query": query,
+            "strategy": strategy,
+            "results": results,
+        }
+
+    def close(self):
+        self.dense.close()

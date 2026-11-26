@@ -2,8 +2,8 @@ from src.hybrid_search import HybridSearch
 from src.reranker import Reranker
 
 class RerankedSearch:
-    def __init__(self):
-        self.hybrid_search = HybridSearch()
+    def __init__(self, hybrid_search=None):
+        self.hybrid_search = hybrid_search or HybridSearch()
         self.reranker = Reranker()
 
     def search(self, query: str, tenant_id: str, limit : int = 5, fetch_limit : int = 20, source : str | None = None) -> list[dict]:

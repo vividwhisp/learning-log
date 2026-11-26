@@ -1,13 +1,16 @@
-from src.adaptive_retrieval import classify_query
+from src.adaptive_retrieval import AdaptiveRetriever
 
-test_queries = [
-    "What is container orchestration?",
-    "ImagePullBackOff",
-    "How does Kubernetes deployment manage replicas?",
-    "Why is my Kubernetes deployment failing and how do I fix it?",
-]
+retriever = AdaptiveRetriever()
 
-for query in test_queries:
-    strategy = classify_query(query)
-    print(f"Query: {query}")
-    print(f"Strategy: {strategy}\n")
+try:
+    response = retriever.search(
+        query="Why is my Kubernetes deployment failing and how do I troubleshoot the error?",
+        tenant_id="alice_001",
+        limit=5,
+    )
+
+    print("Strategy:", response["strategy"])
+    print("Results:", len(response["results"]))
+
+finally:
+    retriever.close()

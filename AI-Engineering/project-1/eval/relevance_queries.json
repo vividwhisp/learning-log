@@ -1,0 +1,63 @@
+
+[
+  {
+    "id": 1,
+    "question": "What is Kubernetes container orchestration?",
+    "expected_label": "relevant",
+    "expected_relevant": true
+  },
+  {
+    "id": 2,
+    "question": "How does a Deployment manage ReplicaSets and Pod replicas?",
+    "expected_label": "relevant",
+    "expected_relevant": true
+  },
+  {
+    "id": 3,
+    "question": "What is the purpose of a Kubernetes ConfigMap?",
+    "expected_label": "relevant",
+    "expected_relevant": true
+  },
+  {
+    "id": 4,
+    "question": "How do Kubernetes Services expose applications?",
+    "expected_label": "relevant",
+    "expected_relevant": true
+  },
+  {
+    "id": 5,
+    "question": "Why might a Pod enter ImagePullBackOff?",
+    "expected_label": "partial",
+    "expected_relevant": false
+  },
+  {
+    "id": 6,
+    "question": "How do Kubernetes Secrets differ from ConfigMaps?",
+    "expected_label": "partial",
+    "expected_relevant": false
+  },
+  {
+    "id": 7,
+    "question": "What happens when a Deployment's desired replica count changes?",
+    "expected_label": "partial",
+    "expected_relevant": false
+  },
+  {
+    "id": 8,
+    "question": "How do Python decorators work?",
+    "expected_label": "irrelevant",
+    "expected_relevant": false
+  },
+  {
+    "id": 9,
+    "question": "How does a PostgreSQL B-tree index work?",
+    "expected_label": "irrelevant",
+    "expected_relevant": false
+  },
+  {
+    "id": 10,
+    "question": "What is the difference between supervised and unsupervised learning?",
+    "expected_label": "irrelevant",
+    "expected_relevant": false
+  }
+]

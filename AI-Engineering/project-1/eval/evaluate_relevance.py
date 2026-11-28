@@ -19,12 +19,18 @@ def main():
     try:
         for item in queries:
             question = item["question"]
-
             results = searcher.search(
                 query=question,
                 tenant_id=TENANT_ID,
                 limit=LIMIT,
             )
+            print("\n--- RETRIEVED CONTEXT ---")
+
+            for index, result in enumerate(results, start=1):
+                print(f"\nChunk {index}")
+                print(f"Source: {result['source']}")
+                print(f"Chunk index: {result['chunk_index']}")
+                print(f"Text: {result['text'][:500]}")
 
             grade = grade_relevance(question, results)
 

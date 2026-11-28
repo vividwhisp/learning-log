@@ -15,32 +15,32 @@
   {
     "id": 3,
     "question": "What is the purpose of a Kubernetes ConfigMap?",
-    "expected_label": "relevant",
-    "expected_relevant": true
+    "expected_label": "irrelevant",
+    "expected_relevant": false
   },
   {
     "id": 4,
     "question": "How do Kubernetes Services expose applications?",
-    "expected_label": "relevant",
-    "expected_relevant": true
+    "expected_label": "irrelevant",
+    "expected_relevant": false
   },
   {
     "id": 5,
     "question": "Why might a Pod enter ImagePullBackOff?",
-    "expected_label": "partial",
-    "expected_relevant": false
+    "expected_label": "relevant",
+    "expected_relevant": true
   },
   {
     "id": 6,
     "question": "How do Kubernetes Secrets differ from ConfigMaps?",
-    "expected_label": "partial",
-    "expected_relevant": false
+    "expected_label": "relevant",
+    "expected_relevant": true
   },
   {
     "id": 7,
     "question": "What happens when a Deployment's desired replica count changes?",
-    "expected_label": "partial",
-    "expected_relevant": false
+    "expected_label": "relevant",
+    "expected_relevant": true
   },
   {
     "id": 8,

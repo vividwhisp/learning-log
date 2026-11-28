@@ -9,7 +9,7 @@ from src.logger import get_logger
 logger = get_logger(__name__)
 load_dotenv()
 
-MODEL = os.getenv("GROQ-MODEL", "openai/gpt-oss-120b")
+MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
 
 GRADING_PROMPT = """
 You are a retrieval relevance evaluator.
